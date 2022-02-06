@@ -2,18 +2,45 @@
 Sr.Engenheiro is a Discord Bot designed by a team of Computer Science students in Universidade Autónoma de Lisboa with the goal to assist various Student/Faculty Discord Servers.
 
 
-## How to contribute:
-1. Fork the repository
-2. Make a new branch in the forked copy
-3. Make your changes
-6. Commit and Push your branch to the original repository
-7. Create a Pull request with a clear description of your feature
-
 ## How to contribute a new feature:
-1. Fork the repository
-2. Make a new branch
-3. In FeatureController.py initiate an instance of the Feature model in the get_Features function with the attributes in the following sequence: command, number of arguments(args), function name
-4. Add the initiated feature to the features list.
+NOTE: To run the bot you need .env file avaibable on Discord server in your local clone.
+
+1. Clone the Repository
+```
+git clone https://github.com/ihammadasghar/SrEngenheiro.git
+```
+cd to SrEngenheiro and dowload all the required packages/libraries:
+```
+pip install -r requirements.txt
+```
+
+2. Make a new branch with the your feature name (e.g. "git branch greeting_feature")
+```
+git checkout -b featurename_feature
+```
+
+3. In FeatureController.py initialize an instance of the Feature model in the get_Features function 
+```
+feature_name = Feature("feature_command", number_of_arguments, feature_function)
+```
+
+4. Add the intialized feature to the features list at the bottom of the get_features function.
+
 5. Define your function at the bottom on the FeatureController.py
-6. Commit and Push your branch to the main repository
-7. Create a Pull request with a clear description of your feature
+```
+async def feature_function(message):
+    #  Your code here
+```
+
+6. Add and Commit
+```
+git Add .
+git commit -m "what changes you made"
+```
+
+7. Push your branch.
+```
+git push origin branch_name
+```
+
+8. Go to github there will be a notification to "create a Pull request", add a description of the functionality of your feature for others to understand what you did and post the pull request.
