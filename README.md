@@ -34,7 +34,7 @@ async def feature_function(message):
 
 6. Add and Commit
 ```
-git Add .
+git add .
 git commit -m "what changes you made"
 ```
 
