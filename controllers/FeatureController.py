@@ -5,10 +5,10 @@ from models.Feature import Feature
 def get_Features():
     #  Intialize your feature here
     greeting = Feature("greet", 0, greet)
-    gethelp =  Feature("!gethelp", 1, get_Help)
+    get_help =  Feature("help", 0, get_help_feature)
     addevent = Feature("addevent",2,add_event)
     #  Add the initialized feature here
-    features = [greeting, gethelp, addevent]
+    features = [greeting, get_help, addevent]
 
     return features
 
