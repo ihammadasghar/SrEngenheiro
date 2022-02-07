@@ -1,4 +1,5 @@
 from controllers.FeatureController import get_Features
+from models.ServerData import ServerData
 import discord
 import os
 from dotenv import load_dotenv
@@ -26,7 +27,8 @@ if __name__ == "__main__":
                 await message.channel.send("Sorry, couldn't find bot-data channel.")
                 return
 
-            guild_data = channel.history(limit=500)
+            guild_data = await channel.history(limit=500).flatten()
+            server_Data =  ServerData(guild_data, channel)
 
             features = get_Features()
             for feature in features:
@@ -35,7 +37,7 @@ if __name__ == "__main__":
                         arguments = [commands[i+2] for i in range(len(commands)-2)]
                         
                         if feature.data_required:
-                            await feature.functionality(*arguments, message=message, data=guild_data)
+                            await feature.functionality(*arguments, message=message, server_data=server_Data)
                             return
                         await feature.functionality(*arguments, message=message)
                         return
