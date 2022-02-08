@@ -1,5 +1,5 @@
-from controllers.FeatureController import get_Features
-from models.ServerData import ServerData
+from controllers.FeatureController import FeatureController
+from models.ServerRecord import ServerRecord
 import discord
 import os
 from dotenv import load_dotenv
@@ -28,23 +28,24 @@ if __name__ == "__main__":
                 return
 
             guild_data = await channel.history(limit=500).flatten()
-            server_Data =  ServerData(guild_data, channel)
+            server_Record =  ServerRecord(guild_data, channel)
 
-            features = get_Features()
-            for feature in features:
+            feature_Controller = FeatureController(message, server_Record)
+            for feature in feature_Controller.features:
                 if command == feature.command:
-                    if len(commands)-2 == feature.args:
+                    #  Arguments validations
+                    if type(feature.args) == list:
+                        if len(commands)-2 in feature.args:
+                            arguments = [commands[i+2] for i in range(len(commands)-2)]
+                    elif len(commands)-2 == feature.args: 
                         arguments = [commands[i+2] for i in range(len(commands)-2)]
-                        
-                        if feature.data_required:
-                            await feature.functionality(*arguments, message=message, server_data=server_Data)
-                            return
-                        await feature.functionality(*arguments, message=message)
+                    else:
+                        await message.channel.send(f"{feature.command} requires {feature.args} arguments.")
                         return
 
-                    await message.channel.send(f"{feature.command} requires {feature.args} arguments.")
+                    await feature.functionality(*arguments)
                     return
-                    
+
             await message.channel.send(f"Sorry, I dont understand")
             return
 
