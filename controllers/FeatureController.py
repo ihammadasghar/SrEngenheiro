@@ -27,10 +27,10 @@ class FeatureController:
                                     description="ADDEVENT [eventname] [date]: Adds an event to the calendar."
                                     )
         
-        note_feature = Feature(command="NOTE", 
+        note_feature = Feature(command="NOTES", 
                                 args=[2, 3, 4], 
                                 functionality=self.note, 
-                                description="NOTE [action] [topic] [name] [item]: Saves a link as note (e.g. note add Links youtube https://youtube.com)\n  Possible Actions:\n  - Add\n  - Delete\n  - Get"
+                                description="NOTES [action] [topic] [name] [item]: Makes notes (e.g. notes add Links youtube https://youtube.com)\n  Possible Actions:\n  - Add\n  - Delete\n  - Get"
                                 )
 
         #  Add the initialized feature here
