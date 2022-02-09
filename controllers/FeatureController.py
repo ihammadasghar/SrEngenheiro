@@ -1,9 +1,10 @@
 from models.Feature import Feature
 
 class FeatureController:
-    def __init__(self, message, server_Record) -> None:
+    def __init__(self, message, server) -> None:
         self.features = self.get_Features()
-        self.server_Record = server_Record
+        self.server = server
+        self.records = server.records
         self.message = message
 
     def get_Features(self):
@@ -68,12 +69,12 @@ class FeatureController:
         if action == "ADD":
             name = name.upper()
             record = {name: item}
-            await self.server_Record.add_Records(topic=topic, records=record)
+            await self.records.add(topic=topic, records=record)
             await self.message.channel.send(f"{name} added to {topic}.")
             return
         
         elif action == "GET":
-            records = self.server_Record.get_Records(topic=topic)
+            records = self.records.get(topic=topic)
             #  In case topic doesnt exist
             if records is None:
                 await self.message.channel.send(f"Sorry, I have no records of the topic {topic}")
@@ -102,7 +103,7 @@ class FeatureController:
 
         elif action == "DELETE":
             name = name.upper()
-            is_removed = await self.server_Record.remove_Record(topic, record_Key=name)
+            is_removed = await self.records.remove(topic, record_Key=name)
             if not is_removed:
                 await self.message.channel.send(f"No such record exists.")
                 return

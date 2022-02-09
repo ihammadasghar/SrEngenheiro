@@ -1,5 +1,6 @@
 from controllers.FeatureController import FeatureController
-from models.ServerRecord import ServerRecord
+from models.Server import Server
+from models.Records import Records
 import discord
 import os
 from dotenv import load_dotenv
@@ -22,15 +23,17 @@ if __name__ == "__main__":
             commands =  message.content.split(" ")
             command = commands[1]
 
-            channel = discord.utils.get(message.guild.channels, name="bot-data")
-            if not channel:
+            data_Channel = discord.utils.get(message.guild.channels, name="bot-data")
+            if not data_Channel:
                 await message.channel.send("Sorry, couldn't find bot-data channel.")
                 return
 
-            guild_data = await channel.history(limit=500).flatten()
-            server_Record =  ServerRecord(guild_data, channel)
+            data_Messages = await data_Channel.history(limit=500).flatten()
+            
+            records = Records(data_Messages, data_Channel)
+            server =  Server(records, data_Channel)
 
-            feature_Controller = FeatureController(message, server_Record)
+            feature_Controller = FeatureController(message, server)
             for feature in feature_Controller.features:
                 if command == feature.command:
                     #  Arguments validations
