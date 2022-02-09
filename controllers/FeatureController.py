@@ -1,4 +1,5 @@
 from models.Feature import Feature
+import datetime
 
 class FeatureController:
     def __init__(self, message, server) -> None:
@@ -21,10 +22,10 @@ class FeatureController:
                                     description="HELP: Lists all commands."
                                     )
 
-        add_event_feature = Feature(command="ADDEVENT", 
-                                    args=2, 
-                                    functionality=self.add_event, 
-                                    description="ADDEVENT [eventname] [date]: Adds an event to the calendar."
+        event_feature = Feature(command="EVENTS", 
+                                    args=[2, 3, 4], 
+                                    functionality=self.event, 
+                                    description="EVENTS [action] [topic] [name] [date]: Adds events (e.g. event add Testes AP 22/4/2022)\n Possible Actions:\n  - Add\n  - Delete\n  - Get"
                                     )
         
         note_feature = Feature(command="NOTES", 
@@ -34,7 +35,7 @@ class FeatureController:
                                 )
 
         #  Add the initialized feature here
-        features = [greeting_feature, get_help_feature, add_event_feature, note_feature]
+        features = [greeting_feature, get_help_feature, event_feature, note_feature]
 
         return features
 
@@ -44,11 +45,71 @@ class FeatureController:
         return
 
 
-    async def add_event(self, event_name, event_date):
-        events = {}
-        events[event_name] = event_date
-        await self.message.channel.send(f"I'll add it to the list.")
-        return
+    def sort_dates(self,events):
+        sorted_events = {}
+        events_list = []
+        for event in events.items():
+            events_list.append({"name": event[0], "date": event[1]})
+        events_list.sort(key=lambda x: datetime.datetime.strptime(x['date'], '%d/%m/%Y'))
+
+        for event in events_list:
+            sorted_events.update({event["name"]:event["date"]})
+
+        return sorted_events
+
+
+    async def event(self, action, topic, name=None, date=None):
+        action = action.upper()
+        topic = topic.upper()
+
+        if action == "ADD":
+            name = name.upper()
+            record = {name: date}
+            await self.records.add(topic=topic, records=record)
+            await self.message.channel.send(f" I'll add {name} to {topic}.")
+            return
+
+        elif action == "GET":
+            records = self.records.get(topic=topic)
+            records = self.sort_dates(records)
+
+            #  In case topic doesnt exist
+            if records is None:
+                await self.message.channel.send(f"Sorry, I have no records of the event {topic}")
+                return
+
+            if not name is None:
+                name = name.upper()
+
+                #  In case the name doesnt exist in the topic
+                try:
+                    record = records[name]
+                except KeyError:
+                    await self.message.channel.send(f"Sorry, I have no record of {name} in the event {topic}.")
+                    return
+
+                await self.message.channel.send(f"{topic}: {name} - {record}.")
+                return
+
+            result = topic
+            for record in records.items():
+                result += "\n" + record[0] + " " + record[1]
+
+            await self.message.channel.send(result)
+            return
+
+        elif action == "DELETE":
+            name = name.upper()
+            is_removed = await self.records.remove(topic, record_Key=name)
+            if not is_removed:
+                await self.message.channel.send(f"No such record exists.")
+                return
+            await self.message.channel.send(f" I'll remove {name} from {topic}.")
+            return
+        
+        else:
+            await self.message.channel.send(f"I don't know how to perform action {action} :(")
+            return
 
 
     async def get_help(self):
