@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
         if message.content.startswith("sr!"):
             commands =  message.content.split(" ")
-            command = commands[1]
+            command = commands[1].upper()
 
             data_Channel = discord.utils.get(message.guild.channels, name="bot-data")
             if not data_Channel:
@@ -29,7 +29,7 @@ if __name__ == "__main__":
                 return
 
             data_Messages = await data_Channel.history(limit=500).flatten()
-            
+
             records = Records(data_Messages, data_Channel)
             server =  Server(records, data_Channel)
 

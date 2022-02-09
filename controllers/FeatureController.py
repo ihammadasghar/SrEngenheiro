@@ -9,28 +9,28 @@ class FeatureController:
 
     def get_Features(self):
         #  Intialize your feature here
-        greeting_feature =  Feature(command="greet", 
+        greeting_feature =  Feature(command="GREET", 
                                     args=0, 
                                     functionality=self.greet, 
-                                    description="greet: Be nice and say Hi to Sr.Engenheiro. :)"
+                                    description="GREET: Be nice and say Hi to Sr.Engenheiro. :)"
                                     )
 
-        get_help_feature =  Feature(command="help", 
+        get_help_feature =  Feature(command="HELP", 
                                     args=0, 
                                     functionality=self.get_help,
-                                    description="help: Lists all commands."
+                                    description="HELP: Lists all commands."
                                     )
 
-        add_event_feature = Feature(command="addevent", 
+        add_event_feature = Feature(command="ADDEVENT", 
                                     args=2, 
                                     functionality=self.add_event, 
-                                    description="addevent eventname date: Adds an event to the calendar."
+                                    description="ADDEVENT [eventname] [date]: Adds an event to the calendar."
                                     )
         
-        note_feature = Feature(command="note", 
+        note_feature = Feature(command="NOTE", 
                                 args=[2, 3, 4], 
                                 functionality=self.note, 
-                                description="note action topic name item: Saves a link as note (e.g. note add Links youtube https://youtube.com)"
+                                description="NOTE [action] [topic] [name] [item]: Saves a link as note (e.g. note add Links youtube https://youtube.com)\n  Possible Actions:\n  - Add\n  - Delete\n  - Get"
                                 )
 
         #  Add the initialized feature here
@@ -52,10 +52,10 @@ class FeatureController:
 
 
     async def get_help(self):
-        text = ""
+        text = "COMMANDS"
         features = self.get_Features()
         for feature in features:
-            text += feature.description + "\n"
+            text += "\n-> " + feature.description
         
         await self.message.channel.send(text)
         return
