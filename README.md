@@ -54,11 +54,9 @@ git push origin branch_name
 ## Using Records module
 ### Adding records:
 ```
-#  Create a dictionary of your data.
-link_Records = {
-    "youtube": "https://youtube.com",
-    "facebook": "https://facebook.com"
-    }
+#  Create a dictionaries of your data.
+link_Records = [{"name": "youtube", "item": "https://youtube.com"},
+                {"name": "facebook", "item": "https://facebook.com"}]
 
 #  Pass the dictionary to the function to save and the topic/table name
 await self.records.add(topic="Links", records=link_Records)
@@ -67,10 +65,10 @@ await self.records.add(topic="Links", records=link_Records)
 ### Getting records:
 ```
 #  Getting one record
-#  Pass the topic/table name and record key.
-youtube_Link_Record = self.records.get(topic="Links", record_Key="youtube")
+#  Pass the topic/table name and record name.
+youtube_Link_Record = self.records.get(topic="Links", record_Name="youtube")
 
-#  Getting all records about a topic
+#  Getting a list of all records about a topic
 #  Pass the topic/table name.
 all_Link_Records = self.records.get(topic="Links")
 ```
@@ -78,6 +76,6 @@ all_Link_Records = self.records.get(topic="Links")
 ### Removing records:
 ```
 #  Removing link youtube from the Links topic.
-await self.records.remove(topic="Links", record_Key="youtube")
+await self.records.remove(topic="Links", record_Name="youtube")
 
 ```

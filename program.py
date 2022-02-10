@@ -45,8 +45,10 @@ if __name__ == "__main__":
                     else:
                         await message.channel.send(f"{feature.command} requires {feature.args} arguments.")
                         return
-
-                    await feature.functionality(*arguments)
+                    try:
+                        await feature.functionality(*arguments)
+                    except:
+                        await message.channel.send(f"Sorry, something went wrong :(")
                     return
 
             await message.channel.send(f"Sorry, I dont understand")
