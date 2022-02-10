@@ -50,6 +50,9 @@ class FeatureController:
         topic = topic.upper()
 
         if action == "ADD":
+            if name is None:
+                await self.message.channel.send(f"Missing event name.")
+                return
             name = name.upper()
             record = [{"name": name, "item": date}]
             await self.records.add(topic=topic, records=record)
@@ -117,6 +120,9 @@ class FeatureController:
         
 
         if action == "ADD":
+            if name is None:
+                await self.message.channel.send(f"Missing name argument.")
+                return
             name = name.upper()
             record = [{"name": name, "item": item}]
             await self.records.add(topic=topic, records=record)
@@ -150,12 +156,15 @@ class FeatureController:
 
 
         elif action == "DELETE":
+            if name is None:
+                await self.message.channel.send(f"Missing event name.")
+                return
             name = name.upper()
             is_Removed = await self.records.remove(topic, record_Name=name)
             if not is_Removed:
                 await self.message.channel.send(f"No such record exists.")
                 return
-            await self.message.channel.send(f"{name} removed from {topic}.")
+            await self.message.channel.send(f"{name} deleted from {topic}.")
             return
         
         else:
