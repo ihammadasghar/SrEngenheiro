@@ -10,10 +10,10 @@ class FeatureController:
 
     def get_Features(self):
         #  Intialize your feature here
-        greeting_feature =  Feature(command="GREET", 
+        greeting_feature =  Feature(command="HI", 
                                     args=0, 
                                     functionality=self.greet, 
-                                    description="GREET: Be nice and say Hi to Sr.Engenheiro. :)"
+                                    description="Hi: greetings!"
                                     )
 
         get_help_feature =  Feature(command="HELP", 
@@ -41,7 +41,7 @@ class FeatureController:
 
 
     async def greet(self):
-        await self.message.channel.send(f"Hi {self.message.author}! I am Sr.Engenheiro\nWould you like some assistance today?")
+        await self.message.channel.send(f"Hi {self.message.author.nick}! Sr.Engenheiro here\n-> sr! help: To see how I can help")
         return
 
 
