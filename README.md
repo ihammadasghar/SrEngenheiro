@@ -54,11 +54,9 @@ git push origin branch_name
 ## Using Records module
 ### Adding records:
 ```
-#  Create a dictionary of your data.
-link_Records = [{
-    "youtube": "https://youtube.com",
-    "facebook": "https://facebook.com"
-    }]
+#  Create a dictionaries of your data.
+link_Records = [{"name": "youtube", "item": "https://youtube.com"},
+                {"name": "facebook", "item": "https://facebook.com"}]
 
 #  Pass the dictionary to the function to save and the topic/table name
 await self.records.add(topic="Links", records=link_Records)
