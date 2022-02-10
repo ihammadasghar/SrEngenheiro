@@ -135,7 +135,7 @@ class FeatureController:
 
                 for record in records:
                     if record["name"] == name:
-                        await self.message.channel.send(f"{topic}: {name} - {record}.")
+                        await self.message.channel.send(topic + "\n-> " + record["name"] + " " + record["item"])
                         return
                 #  Record not found
                 await self.message.channel.send(f"Sorry, I have no record of {name} in the topic {topic}.")
