@@ -1,5 +1,6 @@
 from models.Feature import Feature
 import datetime
+from datetime import date
 
 class FeatureController:
     def __init__(self, message, server) -> None:
@@ -15,8 +16,20 @@ class FeatureController:
                                     functionality=self.greet, 
                                     description="GREET: Be nice and say Hi to Sr.Engenheiro. :)"
                                     )
+        
+        current_day_feature = Feature(command="TODAY",
+                                    args=0,
+                                    functionality=self.today,
+                                    description="TODAY: Tells the current date."
+                                    )               
 
-        get_help_feature =  Feature(command="HELP", 
+        praise_feature = Feature(command="GOOD_BOT",
+                                    args=0, 
+                                    functionality=self.praise,
+                                    description="PRAISE: ???."
+                                    )
+            
+        get_help_feature = Feature(command="HELP", 
                                     args=0, 
                                     functionality=self.get_help,
                                     description="HELP: Lists all commands."
@@ -35,13 +48,23 @@ class FeatureController:
                                 )
 
         #  Add the initialized feature here
-        features = [greeting_feature, get_help_feature, event_feature, note_feature]
+        features = [greeting_feature,current_day_feature, praise_feature, get_help_feature, event_feature, note_feature]
 
         return features
 
 
     async def greet(self):
         await self.message.channel.send(f"Hi {self.message.author}! I am Sr.Engenheiro\nWould you like some assistance today?")
+        return
+
+    async def today(self):
+        today = date.today()
+        d1 = today.strftime("%d/%m/%Y")
+        await self.message.channel.send(f"Today's date is {d1}")
+        return
+
+    async def praise(self):
+        await self.message.channel.send(f"(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧")
         return
 
 
