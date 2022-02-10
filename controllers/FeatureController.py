@@ -23,7 +23,7 @@ class FeatureController:
                                     description="TODAY: Tells the current date."
                                     )               
 
-        praise_feature = Feature(command="GOOD_BOT",
+        praise_feature = Feature(command="GOOD-BOT",
                                     args=0, 
                                     functionality=self.praise,
                                     description="PRAISE: ???."
@@ -58,16 +58,19 @@ class FeatureController:
         await self.message.channel.send(f"Hi {self.message.author.nick}! Sr.Engenheiro here\n-> sr! help: To see how I can help")
         return
 
+    
     async def today(self):
-        today = date.today()
-        d1 = today.strftime("%d/%m/%Y")
-        await self.message.channel.send(f"Today's date is {d1}")
+        date_Today = date.today()
+        date_Today = today.strftime("%d/%m/%Y")
+        await self.message.channel.send(f"Today's date is {date_Today}")
         return
 
+    
     async def praise(self):
         await self.message.channel.send(f"(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧")
         return
-      
+ 
+
     async def event(self, action, topic, name=None, date=None):
         action = action.upper()
         topic = topic.upper()
