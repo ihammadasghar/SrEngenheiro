@@ -23,14 +23,15 @@ if __name__ == "__main__":
             commands =  message.content.split(" ")
             command = commands[1].upper()
 
-            data_Channel = discord.utils.get(message.guild.channels, name="bot-data")
+            base_Guild = bot.get_guild(id=941397423283134528)
+            data_Channel = discord.utils.get(base_Guild.channels, name="bot-data")
             if not data_Channel:
                 await message.channel.send("Sorry, couldn't find bot-data channel.")
                 return
 
             data_Messages = await data_Channel.history(limit=500).flatten()
 
-            records = Records(data_Messages, data_Channel)
+            records = Records(data_Messages, data_Channel, "941397423283134528")
             server =  Server(records, data_Channel)
 
             feature_Controller = FeatureController(message, server)

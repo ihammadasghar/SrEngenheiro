@@ -1,68 +1,113 @@
+from discord import File
+import pickle
+
+
 class Records:
-    def __init__(self, data_Messages, data_Channel) -> None:
+    def __init__(self, data_Messages, data_Channel, server_ID) -> None:
         self.data_Messages = data_Messages
         self.data_Channel = data_Channel
-    
+        self.server_ID = server_ID
 
-    def get_Message(self, topic):
+    def get_Message(self):
         for message in self.data_Messages:
-            if message.content.startswith(topic):
-                return message 
+            if message.content.startswith(self.server_ID):
+                return message
+                
         return None
 
 
-    def get(self, topic, record_Message=None):
+    def get(self, table=None, topic=None, record_Message=None):
         if record_Message is None:
-            record_Message = self.get_Message(topic)
+            record_Message = self.get_Message()
 
         #  If record doesn't exist
         if not record_Message:
             return None
         
-        record = record_Message.content.split("\n")[1:]
+        data = pickle.load(record_Message.attachments[0])
 
-        records_List = []
-        for item in record:
-            item = item.split(" ")
-            records_List.append({"name": item[0], "item": item[1]})
+        if not table and not topic:
+            return data["records"]
+
+        elif table and not topic:
+            return data["records"][table]
+
+        elif table and topic:
+            return data["records"][table][topic]
+
+        return None
+
+
+    async def update(self, records, table=None, topic=None):
+        record_Message = self.get_Message()
+        data = self.get()
+
+        if not table and not topic:
+            data["records"] = records
+
+        elif table and not topic:
+            data["records"][table] = records
+
+        elif table and topic:
+            data["records"][table][topic] = records
         
-        return records_List
+        data["Server_ID"] = self.server_ID
 
+        filepath = f"./{self.server_ID}"
+        with open(filepath, mode="w") as file:
+            pickle.dump(data, file)
 
-    async def update(self, topic, records):
-        record_Message = self.get_Message(topic)
-        new_Record = f"{topic}"
-
-        for record in records:
-                new_Record += "\n" + record["name"] + " " + record["item"]
-        
+        file = File(filepath)
         if record_Message is None:
-            await self.data_Channel.send(new_Record)
+            await record_Message.send(content=self.server_ID, file=file)
             return
 
-        await record_Message.edit(content=new_Record)
+        await record_Message.edit(content=self.server_ID, file=file)
         return
 
 
-    async def add(self, topic, records):
-        old_Records = self.get(topic)
+    async def add(self, records, table=None, topic=None):
+        old_Records = self.get(table, topic)
+
         if not old_Records is None:
-            records = old_Records + records
-        await self.update(topic, records)
+            if not table and not topic:
+                records.update(old_Records["records"])
+
+            elif table and not topic:
+                records.update(old_Records["records"][table])
+
+            elif table and topic:
+                records.update(old_Records["records"][table][topic])
+
+        await self.update(table, topic, records)
 
     
 
-    async def remove(self, topic, record_Name):
-        records = self.get(topic)
+    async def remove(self, table, topic=None, name=None):
+        records = self.get(table, topic)
 
         #  If record doesn't exist
         if not records:
             return False
         
-        for record in records:
-            if record["name"] == record_Name:
-                records.remove(record)
-                await self.update(topic, records)
-                return True
-        #  Record not found
-        return False
+        records.pop(name)
+        if not topic and not name:
+            try:
+                records.pop(table)
+            except KeyError:
+                return False
+
+        elif topic and not name:
+            try:
+                records.pop(topic)
+            except KeyError:
+                return False
+
+        elif topic and name:
+            try:
+                records.pop(name)
+            except KeyError:
+                return False
+        
+        await self.update(table, topic, records)
+        return True
