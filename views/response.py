@@ -3,7 +3,19 @@ from controllers import FeatureController as fclr
 
 async def main(message, features, records):
     if message.content.startswith("sr!"):
-        commands =  message.content.split(" ")
+        parts = message.content.split("\n")
+        commands =  parts[0].split(" ")
+
+        if len(commands) < 2:
+            response = help(features)
+            await message.channel.send(response)
+            return
+        
+        if len(parts) > 1:
+            items = []
+            for item in parts[1:]:
+                items.append(item.split(" "))
+            commands.append(items)
 
         command = commands[1].upper()
 
@@ -25,24 +37,24 @@ async def main(message, features, records):
                     await message.channel.send(f"{feature.command} requires {feature.nargs} arguments.")
                     return
 
-                # try:
-                params = []
-                if not feature.nargs == 0:
-                    params.append(arguments)
+                try:
+                    params = []
+                    if not feature.nargs == 0:
+                        params.append(arguments)
 
-                if feature.records_Required:
-                    params.append(records)
+                    if feature.records_Required:
+                        params.append(records)
 
-                if feature.message_Required:
-                    params.append(message)
+                    if feature.message_Required:
+                        params.append(message)
 
-                response = feature.view_Function(*params)
-                await message.channel.send(response)
+                    response = feature.view_Function(*params)
+                    await message.channel.send(response)
+                    return
+
+                except:
+                    await message.channel.send(f"Sorry, something went wrong :(")
                 return
-
-                # except:
-                #     await message.channel.send(f"Sorry, something went wrong :(")
-                # return
 
         await message.channel.send(f"Sorry, I dont understand this command :/")
         return
@@ -72,17 +84,28 @@ def notes(args, records):
     if action == "ADD":
         try:
             topic = args[1].upper()
+            
+            if type(args[2]) == list:
+                entries = args[2]
+                names = ""
+                for entry in entries:
+                    names += entry[0] + " "
+                    fclr.add_Note(records=records, topic=topic, name=entry[0], item=entry[1])
+
+                response = f"Noted {names} in topic {topic}."
+                return response
+
             name = args[2].upper()
             item = args[3].upper()
+            fclr.add_Note(records=records, topic=topic, name=name, item=item)
+
+            response = f"Noted {name} in topic {topic}."
+            return response
 
         except IndexError:
             print("arguments error raised")
-            raise IndexError
+            return "Missing arguments."
 
-        fclr.add_Note(records=records, topic=topic, name=name, item=item)
-
-        response = f"Noted {name} in topic {topic}."
-        return response
 
     elif action == "DELETE":
         topic = args[1].upper()
@@ -126,17 +149,28 @@ def events(args, records):
     if action == "ADD":
         try:
             topic = args[1].upper()
+            
+            if type(args[2]) == list:
+                entries = args[2]
+                names = ""
+                for entry in entries:
+                    names += entry[0] + " "
+                    fclr.add_Event(records=records, topic=topic, name=entry[0], date=entry[1])
+
+                response = f"Events {names} added in topic {topic}."
+                return response
+
             name = args[2].upper()
             date = args[3].upper()
+            fclr.add_Event(records=records, topic=topic, name=name, date=date)
+
+            response = f"Event {name} added in topic {topic}."
+            return response
 
         except IndexError:
             print("arguments error raised")
-            raise IndexError
+            return "Missing Arguments."
 
-        fclr.add_Event(records=records, topic=topic, name=name, date=date)
-
-        response = f"Event {name} in topic {topic} added."
-        return response
 
     elif action == "DELETE":
         topic = args[1].upper()
