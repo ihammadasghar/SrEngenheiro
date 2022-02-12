@@ -45,8 +45,10 @@ def greet(args):
     return
 
 
-def today(args):
-    pass
+def today():
+    date_Today = fclr.get_Date_Today()
+    response = f"Date today is {date_Today}"
+    return response
 
 
 def praise():

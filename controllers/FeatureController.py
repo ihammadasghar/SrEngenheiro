@@ -9,11 +9,10 @@ async def greet(self):
     return
 
 
-async def today(self):
+def get_Date_Today():
     date_Today = date.today()
-    date_Today = today.strftime("%d/%m/%Y")
-    await self.message.channel.send(f"Today's date is {date_Today}")
-    return
+    date_Today = date_Today.strftime("%d/%m/%Y")
+    return date_Today
 
 
 def get_Commands_Description(features):
