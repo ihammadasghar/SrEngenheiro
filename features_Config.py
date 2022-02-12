@@ -3,39 +3,40 @@ from views.response import *
 
 #  Intialize your feature here
 greeting_feature =  Feature(command="HI", 
-                            args=0, 
-                            functionality=greet, 
+                            nargs=0, 
+                            view_Function=greet, 
                             description="Hi: greetings!",
                             message_Required=True
                             )
 
 current_day_feature = Feature(command="TODAY",
-                            args=0,
-                            functionality=today,
+                            nargs=0,
+                            view_Function=today,
                             description="TODAY: Tells the current date."
                             )               
 
 praise_feature = Feature(command="GOOD-BOT",
-                            args=0, 
-                            functionality=praise,
+                            nargs=0, 
+                            view_Function=praise,
                             description="PRAISE: ???."
                             )
     
 help_feature = Feature(command="HELP", 
-                            args=0, 
-                            functionality=help,
+                            nargs=0, 
+                            view_Function=help,
                             description="HELP: Lists all commands."
                             )
 
 events_feature = Feature(command="EVENTS", 
-                            args=[2, 3, 4], 
-                            functionality=events, 
+                            nargs=[2, 3, 4], 
+                            view_Function=events, 
+                            records_Required=True,
                             description="EVENTS [action] [topic] [name] [date]: Adds events (e.g. event add Testes AP 22/4/2022)\n Possible Actions:\n  - Add\n  - Delete\n  - Get"
                             )
 
 notes_feature = Feature(command="NOTES", 
-                        args=[2, 3, 4], 
-                        functionality=notes,
+                        nargs=[2, 3, 4], 
+                        view_Function=notes,
                         records_Required=True, 
                         description="NOTES [action] [topic] [name] [item]: Makes notes (e.g. notes add Links youtube https://youtube.com)\n  Possible Actions:\n  - Add\n  - Delete\n  - Get"
                         )

@@ -2,7 +2,7 @@ from http import server
 from pyexpat import features
 from models.Records import Records
 from models.Server import Server
-from feature_registry import features
+from features_Config import features
 from views.response import main
 import pickle
 from os import remove
@@ -30,15 +30,14 @@ if __name__ == "__main__":
 
         guild_ID = message.guild.id
         record_Message = None
-        for message in data_Messages:
-            if message.content.startswith(str(guild_ID)):
-                record_Message = message
+        for m in data_Messages:
+            if m.content.startswith(str(guild_ID)):
+                record_Message = m
 
         server = Server(record_Message=record_Message, data_Channel=data_Channel, ID=guild_ID)
         records = await load_Records(server)
         records = Records(records, server)
 
-        print("running view")
         await main(message, features, records)
 
         if records.updated:

@@ -3,54 +3,49 @@ from controllers import FeatureController as fclr
 
 async def main(message, features, records):
     if message.content.startswith("sr!"):
-            commands =  message.content.split(" ")
+        commands =  message.content.split(" ")
 
-            if len(commands)>=2:
-                command = commands[1].upper()
-            else:
-                response = greet(message)
-                await message.channel.send(response)
-                return
+        command = commands[1].upper()
 
-            #  Special feature cases
-            if command == "HELP":  #  Case: Requires all feature list
-                response = help(features)
-                await message.channel.send(response)
-                return
+        #  Special feature cases
+        if command == "HELP":  #  Case: Requires all feature list
+            response = help(features)
+            await message.channel.send(response)
+            return
 
-            for feature in features:
-                if command == feature.command:
-                    #  Arguments validations
-                    if type(feature.args) == list:
-                        if len(commands)-2 in feature.args:
-                            arguments = [commands[i+2] for i in range(len(commands)-2)]
-                    elif len(commands)-2 == feature.args: 
+        for feature in features:
+            if command == feature.command:
+                #  Arguments validations
+                if type(feature.nargs) == list:
+                    if len(commands)-2 in feature.nargs:
                         arguments = [commands[i+2] for i in range(len(commands)-2)]
-                    else:
-                        await message.channel.send(f"{feature.command} requires {feature.args} arguments.")
-                        return
-
-                    # try:
-                    params = []
-                    if not feature.args == 0:
-                        params.append(arguments)
-
-                    if feature.records_Required:
-                        params.append(records)
-
-                    if feature.message_Required:
-                        params.append(message)
-
-                    response = feature.functionality(*params)
-                    await message.channel.send(response)
+                elif len(commands)-2 == feature.nargs: 
+                    arguments = [commands[i+2] for i in range(len(commands)-2)]
+                else:
+                    await message.channel.send(f"{feature.command} requires {feature.nargs} arguments.")
                     return
 
-                    # except:
-                    #     await message.channel.send(f"Sorry, something went wrong :(")
-                    # return
+                # try:
+                params = []
+                if not feature.nargs == 0:
+                    params.append(arguments)
 
-            await message.channel.send(f"Sorry, I dont understand this command :/")
-            return
+                if feature.records_Required:
+                    params.append(records)
+
+                if feature.message_Required:
+                    params.append(message)
+
+                response = feature.view_Function(*params)
+                await message.channel.send(response)
+                return
+
+                # except:
+                #     await message.channel.send(f"Sorry, something went wrong :(")
+                # return
+
+        await message.channel.send(f"Sorry, I dont understand this command :/")
+        return
 
 
 def greet(message):

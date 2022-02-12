@@ -1,8 +1,8 @@
 class Feature:
-    def __init__(self, command, args, functionality, description="No description", records_Required=False, message_Required=False) -> None:
+    def __init__(self, command, nargs, view_Function, description="No description", records_Required=False, message_Required=False) -> None:
         self.command = command
-        self.args = args
-        self.functionality = functionality
+        self.nargs = nargs
+        self.view_Function = view_Function
         self.description = description
         self.records_Required = records_Required
         self.message_Required = message_Required

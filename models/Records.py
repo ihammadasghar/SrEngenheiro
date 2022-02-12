@@ -20,10 +20,6 @@ class Records:
 
     def update(self, records, table=None, topic=None):
         old_Records = self.records
-        if old_Records == {}:
-            print(f"No existing records...\nInitialized empty records dictionary.")
-
-        print(f"Records: {old_Records}")
 
         if table:
             if not table in old_Records.keys():
@@ -40,13 +36,11 @@ class Records:
             self.records = records
 
         self.updated = True
-        print("Records update succesfull.")
     
 
     def remove(self, table, topic=None, name=None):
         #  If record doesn't exist
-        if self.record == {}:
-            print("No existing records.")
+        if self.records == {}:
             return False
 
         try:
