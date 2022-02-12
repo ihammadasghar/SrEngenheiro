@@ -49,8 +49,8 @@ def today(args):
     pass
 
 
-def praise(args):
-    pass
+def praise():
+    return "(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧"
 
 
 def events(args):
