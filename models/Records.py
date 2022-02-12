@@ -53,7 +53,7 @@ class Records:
 
         if not table and not topic:
             print(f"Updating records...")
-            old_Records = records
+            old_Records.update(records)
 
         elif table and not topic:
             print(f"Request to update table {table}...")
@@ -64,13 +64,12 @@ class Records:
                 old_Records[table] = {}
 
             print(f"Updating table {table}...")
-            old_Records[table] = records
+            old_Records[table].update(records)
 
         elif table and topic:
             print(f"Request to update topic {topic} in table {table}...")
             if table not in old_Records.keys():
                 print(f"Table {table} not found...")
-
                 old_Records[table] = {}
 
             if topic not in old_Records[table].keys():
@@ -80,7 +79,7 @@ class Records:
                 old_Records[table][topic] = {}
 
             print(f"Updating topic {topic} in table {table}...")
-            old_Records[table][topic] = records
+            old_Records[table][topic].update(records)
         
         data = {}
         data["Server_ID"] = self.server_ID
@@ -152,9 +151,9 @@ class Records:
                 return False
 
         elif topic and name:
-            print(f"Deleting entry {name} from topic {topic} in table {table}...")
             try:
-                records.pop(name)
+                print(f"Deleting entry {name} from topic {topic} in table {table}...")
+                records[topic].pop(name)
             except KeyError:
                 print(f"Entry {name} not found in topic {topic} of table {table}.")
                 return False

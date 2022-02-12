@@ -189,3 +189,40 @@ def delete_Notes_Topic(records, topic):
     deleted = records.remove(table="NOTES", topic=topic)
     return deleted
 
+
+async def add_Event(topic, name, date, records):
+    event = {name: date}
+    await records.update(table="EVENTS", topic=topic, records=event)
+    return
+
+
+async def get_Event(records, topic, name):
+    event = await records.get(table="EVENTS", topic=topic)
+    if not event:
+        return None
+    text = f"Event on topic {topic}:\n-> {name} - {event[name]}"
+    return text
+
+
+async def get_Events_Topic(records, topic):
+    events = await records.get(table="EVENTS", topic=topic)
+    if not events:
+        return None
+
+    #  Sorting events acording to dates
+    events = dict(sorted(events.items(), key=lambda x: datetime.datetime.strptime(x[1], '%d/%m/%Y')))
+
+    text = f"Event on topic {topic}:\n"
+    for name in events.keys():
+        text += f"-> {name} - {events[name]}\n" 
+    return text
+
+
+def delete_Event(records, topic, name):
+    deleted = records.remove(table="EVENTS", topic=topic, name=name)
+    return deleted
+
+
+def delete_Events_Topic(records, topic):
+    deleted = records.remove(table="EVENTS", topic=topic)
+    return deleted

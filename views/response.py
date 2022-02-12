@@ -111,6 +111,60 @@ async def notes(args, records):
         return f"I don't know how to perform the action {action}."
 
 
+async def events(args, records):
+    action =  args[0].upper()
+    if action == "ADD":
+        try:
+            topic = args[1].upper()
+            name = args[2].upper()
+            date = args[3].upper()
+
+        except IndexError:
+            print("arguments error raised")
+            raise IndexError
+
+        await fclr.add_Event(records=records, topic=topic, name=name, date=date)
+
+        response = f"Event {name} in topic {topic} added."
+        return response
+
+    elif action == "DELETE":
+        topic = args[1].upper()
+        if len(args) == 3:
+            name = args[2].upper()
+            is_Deleted = await fclr.delete_Event(topic=topic, name=name, records=records)
+            if is_Deleted:
+                response = f"Event {name} deleted from topic {topic}."
+                return response
+
+            response = f"Couldn't find event {name}."
+            return response
+
+        is_Deleted = await fclr.delete_Events_Topic(topic=topic, records=records)
+        if is_Deleted:
+                response = f"Events topic {topic} deleted."
+                return response
+        response = f"Couldn't find events topic {topic}."
+        return response
+    
+    elif action == "GET":
+        topic = args[1].upper()
+        if len(args) == 3:
+            name = args[2].upper()
+            event = await fclr.get_Event(topic=topic, name=name, records=records)
+            if not event:
+                return f"Couldn't find event {name}."
+            return event
+
+        topic_Events = await fclr.get_Events_Topic(topic=topic, records=records)
+        if not topic_Events:
+            return f"Couldn't find events on topic {topic}."
+        return topic_Events
+        
+    else:
+        return f"I don't know how to perform the action {action}."
+
+
 def help(features):
     response = fclr.get_Commands_Description(features)
     return response
