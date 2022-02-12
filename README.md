@@ -25,19 +25,29 @@ pip install -r requirements.txt
 git checkout -b featurename_feature
 ```
 
-3. In FeatureController.py initialize an instance of the Feature model in the get_Features function 
+3. In feature_Config.py create an instance of the Feature model
+- command: (str) Should be in all caps
+- nargs: (int) number of arguments
+- view_Function: (function refrence) Corresponding view function.
 ```
-feature_name = Feature("feature_command", number_of_arguments, feature_function)
+feature_name = Feature(command, nargs, view_Function, description="No description", records_Required=False, message_Required=False)
 ```
 
-4. Add the intialized feature to the features list at the bottom of the get_features function.
+4. Add the instantiated feature to the features list at the bottom
 
-5. Define your function at the bottom on the FeatureController.py
+5. Define your view function in views/response.py at the bottom.
+- args: (list) a list of all arguments of the command
+- records: (records) [records module](#Using-Records-module) with function update,get,remove
+- message: (message) command message object
 ```
-async def feature_function(message):
+def featurename(args, records, message):
     #  Your code here
+    date_Today = fclr.get_Date_Today()  #  fclr is the feature controller
+    response = f"Date today is {date_Today}"
+    return response
 ```
-
+NOTE: All arguments validation and response string generation should be done in the view function while all the data fetching and processing (i.e. technical stuff) should be defined in FeatureController.py
+ 
 6. Add and Commit
 ```
 git add .
@@ -55,27 +65,24 @@ git push origin branch_name
 ### Adding records:
 ```
 #  Create a dictionaries of your data.
-link_Records = [{"name": "youtube", "item": "https://youtube.com"},
-                {"name": "facebook", "item": "https://facebook.com"}]
+link_Record = {"youtube": "https://youtube.com"}
 
-#  Pass the dictionary to the function to save and the topic/table name
-await self.records.add(topic="Links", records=link_Records)
+#  Pass the dictionary to the function to save and the topic and table name
+records.add(table="NOTES", topic="Links", records=link_Record)
 ```
 
 ### Getting records:
 ```
 #  Getting one record
-#  Pass the topic/table name and record name.
-youtube_Link_Record = self.records.get(topic="Links", record_Name="youtube")
+youtube_Link_Record = self.records.get(table="NOTES", topic="Links", record_Name="youtube")
 
 #  Getting a list of all records about a topic
-#  Pass the topic/table name.
-all_Link_Records = self.records.get(topic="Links")
+all_Link_Records = records.get(table="NOTES", topic="Links")
 ```
 
 ### Removing records:
 ```
 #  Removing link youtube from the Links topic.
-await self.records.remove(topic="Links", record_Name="youtube")
+records.remove(table="NOTES", topic="Links", record_Name="youtube")
 
 ```
