@@ -84,6 +84,7 @@ def notes(args, records):
     if action == "ADD":
         try:
             topic = args[1].upper()
+            
             if type(args[2]) == list:
                 entries = args[2]
                 names = ""
@@ -148,6 +149,7 @@ def events(args, records):
     if action == "ADD":
         try:
             topic = args[1].upper()
+            
             if type(args[2]) == list:
                 entries = args[2]
                 names = ""
@@ -168,6 +170,7 @@ def events(args, records):
         except IndexError:
             print("arguments error raised")
             return "Missing Arguments."
+
 
     elif action == "DELETE":
         topic = args[1].upper()
