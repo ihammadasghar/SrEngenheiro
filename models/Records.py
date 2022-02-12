@@ -1,68 +1,57 @@
 class Records:
-    def __init__(self, data_Messages, data_Channel) -> None:
-        self.data_Messages = data_Messages
-        self.data_Channel = data_Channel
-    
+    def __init__(self, records, server) -> None:
+        self.records = records
+        self.server = server
+        self.updated = False
 
-    def get_Message(self, topic):
-        for message in self.data_Messages:
-            if message.content.startswith(topic):
-                return message 
+
+    def get(self, table=None, topic=None):
+        if not table and not topic:
+            return self.records
+
+        elif table and not topic:
+            return self.records[table]
+
+        elif table and topic:
+            return self.records[table][topic]
+
         return None
 
 
-    def get(self, topic, record_Message=None):
-        if record_Message is None:
-            record_Message = self.get_Message(topic)
+    def update(self, records, table=None, topic=None):
+        old_Records = self.records
 
-        #  If record doesn't exist
-        if not record_Message:
-            return None
-        
-        record = record_Message.content.split("\n")[1:]
+        if table:
+            if not table in old_Records.keys():
+                old_Records[table] = {}
+            
+            if not topic:
+                old_Records[table].update(records)
+            
+            else:
+                if not topic in old_Records[table].keys():
+                    old_Records[table][topic] =  {}
+                old_Records[table][topic].update(records)
+        else:
+            self.records = records
 
-        records_List = []
-        for item in record:
-            item = item.split(" ")
-            records_List.append({"name": item[0], "item": item[1]})
-        
-        return records_List
-
-
-    async def update(self, topic, records):
-        record_Message = self.get_Message(topic)
-        new_Record = f"{topic}"
-
-        for record in records:
-                new_Record += "\n" + record["name"] + " " + record["item"]
-        
-        if record_Message is None:
-            await self.data_Channel.send(new_Record)
-            return
-
-        await record_Message.edit(content=new_Record)
-        return
-
-
-    async def add(self, topic, records):
-        old_Records = self.get(topic)
-        if not old_Records is None:
-            records = old_Records + records
-        await self.update(topic, records)
-
+        self.updated = True
     
 
-    async def remove(self, topic, record_Name):
-        records = self.get(topic)
-
+    def remove(self, table, topic=None, name=None):
         #  If record doesn't exist
-        if not records:
+        if self.records == {}:
+            return False
+
+        try:
+            if name:
+                self.records[table][topic].pop(name)
+            elif topic:
+                self.records[table].pop(topic)
+            else:
+                self.records.pop(table)
+        except KeyError:
             return False
         
-        for record in records:
-            if record["name"] == record_Name:
-                records.remove(record)
-                await self.update(topic, records)
-                return True
-        #  Record not found
-        return False
+        self.updated = True
+        return True
