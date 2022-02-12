@@ -1,9 +1,11 @@
-from controllers.FeatureController import FeatureController
-from models.Server import Server
+from pyexpat import features
 from models.Records import Records
+from feature_registry import features
+from views.response import main
 import discord
 import os
 from dotenv import load_dotenv
+
 
 if __name__ == "__main__":
     load_dotenv()
@@ -19,40 +21,15 @@ if __name__ == "__main__":
         if message.author == bot.user:
             return
 
-        if message.content.startswith("sr!"):
-            commands =  message.content.split(" ")
-            command = commands[1].upper()
-
-            base_Guild = bot.get_guild(id=941397423283134528)
-            data_Channel = discord.utils.get(base_Guild.channels, name="bot-data")
-            if not data_Channel:
-                await message.channel.send("Sorry, couldn't find bot-data channel.")
-                return
-
-            data_Messages = await data_Channel.history(limit=500).flatten()
-
-            records = Records(data_Messages, data_Channel, "941397423283134528")
-            server =  Server(records, data_Channel)
-
-            feature_Controller = FeatureController(message, server)
-            for feature in feature_Controller.features:
-                if command == feature.command:
-                    #  Arguments validations
-                    if type(feature.args) == list:
-                        if len(commands)-2 in feature.args:
-                            arguments = [commands[i+2] for i in range(len(commands)-2)]
-                    elif len(commands)-2 == feature.args: 
-                        arguments = [commands[i+2] for i in range(len(commands)-2)]
-                    else:
-                        await message.channel.send(f"{feature.command} requires {feature.args} arguments.")
-                        return
-                    try:
-                        await feature.functionality(*arguments)
-                    except:
-                        await message.channel.send(f"Sorry, something went wrong :(")
-                    return
-
-            await message.channel.send(f"Sorry, I dont understand")
+        data_Channel = bot.get_channel(id=941397535594008587)
+        if not data_Channel:
+            await message.channel.send("Sorry, I am having problems fetching data.")
             return
+
+        data_Messages = await data_Channel.history(limit=500).flatten()
+
+        records = Records(data_Messages, data_Channel, "941397423283134528")
+        await main(message, features, records)
+        
 
     bot.run(os.getenv("TOKEN"))
