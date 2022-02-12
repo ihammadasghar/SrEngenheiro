@@ -147,12 +147,12 @@ from datetime import date
 #         return
 
 
-# async def get_Commands_Description():
-#     text = "COMMANDS"
-#     for feature in features:
-#         text += "\n-> " + feature.description
+def get_Commands_Description(features):
+    text = "COMMANDS"
+    for feature in features:
+        text += "\n-> " + feature.description
     
-#     return text
+    return text
 
 
 async def add_Note(topic, name, item, records):

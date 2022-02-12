@@ -6,6 +6,11 @@ async def main(message, features, records):
             commands =  message.content.split(" ")
             command = commands[1].upper()
 
+            if command == "HELP":  #  Special feature case that requires all features
+                response = help(features)
+                await message.channel.send(response)
+                return
+
             for feature in features:
                 if command == feature.command:
                     #  Arguments validations
@@ -106,6 +111,6 @@ async def notes(args, records):
         return f"I don't know how to perform the action {action}."
 
 
-def help():
-    response = fclr.get_Commands_Description()
+def help(features):
+    response = fclr.get_Commands_Description(features)
     return response
