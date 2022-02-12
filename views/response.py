@@ -4,9 +4,16 @@ from controllers import FeatureController as fclr
 async def main(message, features, records):
     if message.content.startswith("sr!"):
             commands =  message.content.split(" ")
-            command = commands[1].upper()
 
-            if command == "HELP":  #  Special feature case that requires all features
+            if len(commands)>=2:
+                command = commands[1].upper()
+            else:
+                response = greet(message)
+                await message.channel.send(response)
+                return
+
+            #  Special feature cases
+            if command == "HELP":  #  Case: Requires all feature list
                 response = help(features)
                 await message.channel.send(response)
                 return
@@ -24,12 +31,17 @@ async def main(message, features, records):
                         return
 
                     # try:
-                    if feature.records_Required:
-                        response = await feature.functionality(arguments, records)
-                        await message.channel.send(response)
-                        return
+                    params = []
+                    if not feature.args == 0:
+                        params.append(arguments)
 
-                    response = await feature.functionality(arguments, records)
+                    if feature.records_Required:
+                        params.append(records)
+
+                    if feature.message_Required:
+                        params.append(message)
+
+                    response = feature.functionality(*params)
                     await message.channel.send(response)
                     return
 
@@ -41,8 +53,9 @@ async def main(message, features, records):
             return
 
 
-def greet(args):
-    return
+def greet(message):
+    response = f"Hi {message.author.nick}! Sr.Engenheiro here\n-> 'sr! help' to see how I can help"
+    return response
 
 
 def today():
@@ -59,7 +72,7 @@ def events(args):
     pass
 
 
-async def notes(args, records):
+def notes(args, records):
     action =  args[0].upper()
     if action == "ADD":
         try:
@@ -71,7 +84,7 @@ async def notes(args, records):
             print("arguments error raised")
             raise IndexError
 
-        await fclr.add_Note(records=records, topic=topic, name=name, item=item)
+        fclr.add_Note(records=records, topic=topic, name=name, item=item)
 
         response = f"Noted {name} in topic {topic}."
         return response
@@ -80,7 +93,7 @@ async def notes(args, records):
         topic = args[1].upper()
         if len(args) == 3:
             name = args[2].upper()
-            is_Deleted = await fclr.delete_Note(topic=topic, name=name, records=records)
+            is_Deleted = fclr.delete_Note(topic=topic, name=name, records=records)
             if is_Deleted:
                 response = f"Note {name} deleted from topic {topic}."
                 return response
@@ -88,7 +101,7 @@ async def notes(args, records):
             response = f"Couldn't find note {name}."
             return response
 
-        is_Deleted = await fclr.delete_Notes_Topic(topic=topic, records=records)
+        is_Deleted = fclr.delete_Notes_Topic(topic=topic, records=records)
         if is_Deleted:
                 response = f"Notes topic {topic} deleted."
                 return response
@@ -99,12 +112,12 @@ async def notes(args, records):
         topic = args[1].upper()
         if len(args) == 3:
             name = args[2].upper()
-            note = await fclr.get_Note(topic=topic, name=name, records=records)
+            note = fclr.get_Note(topic=topic, name=name, records=records)
             if not note:
                 return f"Couldn't find note {name}."
             return note
 
-        topic_Notes = await fclr.get_Notes_Topic(topic=topic, records=records)
+        topic_Notes = fclr.get_Notes_Topic(topic=topic, records=records)
         if not topic_Notes:
             return f"Couldn't find notes on topic {topic}."
         return topic_Notes
@@ -113,7 +126,7 @@ async def notes(args, records):
         return f"I don't know how to perform the action {action}."
 
 
-async def events(args, records):
+def events(args, records):
     action =  args[0].upper()
     if action == "ADD":
         try:
@@ -125,7 +138,7 @@ async def events(args, records):
             print("arguments error raised")
             raise IndexError
 
-        await fclr.add_Event(records=records, topic=topic, name=name, date=date)
+        fclr.add_Event(records=records, topic=topic, name=name, date=date)
 
         response = f"Event {name} in topic {topic} added."
         return response
@@ -134,7 +147,7 @@ async def events(args, records):
         topic = args[1].upper()
         if len(args) == 3:
             name = args[2].upper()
-            is_Deleted = await fclr.delete_Event(topic=topic, name=name, records=records)
+            is_Deleted = fclr.delete_Event(topic=topic, name=name, records=records)
             if is_Deleted:
                 response = f"Event {name} deleted from topic {topic}."
                 return response
@@ -142,7 +155,7 @@ async def events(args, records):
             response = f"Couldn't find event {name}."
             return response
 
-        is_Deleted = await fclr.delete_Events_Topic(topic=topic, records=records)
+        is_Deleted = fclr.delete_Events_Topic(topic=topic, records=records)
         if is_Deleted:
                 response = f"Events topic {topic} deleted."
                 return response
@@ -153,12 +166,12 @@ async def events(args, records):
         topic = args[1].upper()
         if len(args) == 3:
             name = args[2].upper()
-            event = await fclr.get_Event(topic=topic, name=name, records=records)
+            event = fclr.get_Event(topic=topic, name=name, records=records)
             if not event:
                 return f"Couldn't find event {name}."
             return event
 
-        topic_Events = await fclr.get_Events_Topic(topic=topic, records=records)
+        topic_Events = fclr.get_Events_Topic(topic=topic, records=records)
         if not topic_Events:
             return f"Couldn't find events on topic {topic}."
         return topic_Events

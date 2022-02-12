@@ -3,12 +3,6 @@ import datetime
 from datetime import date
 
 
-
-async def greet(self):
-    await self.message.channel.send(f"Hi {self.message.author.nick}! Sr.Engenheiro here\n-> sr! help: To see how I can help")
-    return
-
-
 def get_Date_Today():
     date_Today = date.today()
     date_Today = date_Today.strftime("%d/%m/%Y")
@@ -23,22 +17,22 @@ def get_Commands_Description(features):
     return text
 
 
-async def add_Note(topic, name, item, records):
+def add_Note(topic, name, item, records):
     note = {name: item}
-    await records.update(table="NOTES", topic=topic, records=note)
+    records.update(table="NOTES", topic=topic, records=note)
     return
 
 
-async def get_Note(records, topic, name):
-    note = await records.get(table="NOTES", topic=topic)
+def get_Note(records, topic, name):
+    note = records.get(table="NOTES", topic=topic)
     if not note:
         return None
     text = f"Note on topic {topic}:\n-> {name} - {note[name]}"
     return text
 
 
-async def get_Notes_Topic(records, topic):
-    notes = await records.get(table="NOTES", topic=topic)
+def get_Notes_Topic(records, topic):
+    notes = records.get(table="NOTES", topic=topic)
     if not notes:
         return None
 
@@ -58,22 +52,22 @@ def delete_Notes_Topic(records, topic):
     return deleted
 
 
-async def add_Event(topic, name, date, records):
+def add_Event(topic, name, date, records):
     event = {name: date}
-    await records.update(table="EVENTS", topic=topic, records=event)
+    records.update(table="EVENTS", topic=topic, records=event)
     return
 
 
-async def get_Event(records, topic, name):
-    event = await records.get(table="EVENTS", topic=topic)
+def get_Event(records, topic, name):
+    event = records.get(table="EVENTS", topic=topic)
     if not event:
         return None
     text = f"Event on topic {topic}:\n-> {name} - {event[name]}"
     return text
 
 
-async def get_Events_Topic(records, topic):
-    events = await records.get(table="EVENTS", topic=topic)
+def get_Events_Topic(records, topic):
+    events = records.get(table="EVENTS", topic=topic)
     if not events:
         return None
 

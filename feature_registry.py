@@ -5,7 +5,8 @@ from views.response import *
 greeting_feature =  Feature(command="HI", 
                             args=0, 
                             functionality=greet, 
-                            description="Hi: greetings!"
+                            description="Hi: greetings!",
+                            message_Required=True
                             )
 
 current_day_feature = Feature(command="TODAY",
