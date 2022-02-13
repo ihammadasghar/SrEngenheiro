@@ -33,13 +33,13 @@ async def main(message, features, records):
 
 
 def greet(message):
-    response = f"Hi {message.author.nick}! Sr.Engenheiro here\n-> 'sr! help' to see how I can help"
+    response = f"Hi {message.author.nick}! `sr! help` to see how I can help"
     return response
 
 
 def today():
     date_Today = fclr.get_Date_Today()
-    response = f"Date today is {date_Today}"
+    response = f"Date today is `{date_Today}`"
     return response
 
 

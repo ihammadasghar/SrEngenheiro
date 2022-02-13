@@ -9,9 +9,9 @@ def get_Date_Today():
 
 
 def get_Commands_Description(features):
-    text = "COMMANDS\n"
+    text = "**COMMANDS**\n"
     for feature in features:
-        text += feature.description + "\n\n"
+        text += feature.description + "\n"
     
     return text
 
@@ -26,7 +26,7 @@ def get_Note(records, topic, name):
     note = records.get(table="NOTES", topic=topic)
     if not note:
         return None
-    text = f"Note on topic {topic}:\n-> {name} - {note[name]}"
+    text = f"**Note on topic {topic}:\n-> {name}** ```{note[name]}```"
     return text
 
 
@@ -35,9 +35,9 @@ def get_Notes_Topic(records, topic):
     if not notes:
         return None
 
-    text = f"Note on topic {topic}:\n"
+    text = f"**Notes on topic {topic}:**\n"
     for name in notes.keys():
-        text += f"-> {name} - {notes[name]}\n" 
+        text += f"**-> {name}** ```{notes[name]}```\n" 
     return text
 
 
@@ -61,7 +61,7 @@ def get_Event(records, topic, name):
     event = records.get(table="EVENTS", topic=topic)
     if not event:
         return None
-    text = f"Event on topic {topic}:\n-> {name} - {event[name]}"
+    text = f"**Event on topic {topic}:\n-> {name}** `{event[name]}`"
     return text
 
 
@@ -73,9 +73,9 @@ def get_Events_Topic(records, topic):
     #  Sorting events acording to dates
     events = dict(sorted(events.items(), key=lambda x: datetime.datetime.strptime(x[1], '%d/%m/%Y')))
 
-    text = f"Event on topic {topic}:\n"
+    text = f"**Events on topic {topic}:**\n"
     for name in events.keys():
-        text += f"-> {name} - {events[name]}\n" 
+        text += f"**-> {name}** `{events[name]}`\n" 
     return text
 
 
