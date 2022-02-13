@@ -6,14 +6,18 @@ class Records:
 
 
     def get(self, table=None, topic=None):
-        if not table and not topic:
-            return self.records
+        try:
+            if not table and not topic:
+                return self.records
 
-        elif table and not topic:
-            return self.records[table]
+            elif table and not topic:
+                return self.records[table]
 
-        elif table and topic:
-            return self.records[table][topic]
+            elif table and topic:
+                return self.records[table][topic]
+
+        except KeyError:
+            return None
 
         return None
 

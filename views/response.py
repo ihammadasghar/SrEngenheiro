@@ -3,20 +3,7 @@ from controllers import FeatureController as fclr
 
 async def main(message, features, records):
     if message.content.startswith("sr!"):
-        parts = message.content.split("\n")
-        commands =  parts[0].split(" ")
-
-        if len(commands) < 2:
-            response = help(features)
-            await message.channel.send(response)
-            return
-        
-        if len(parts) > 1:
-            items = []
-            for item in parts[1:]:
-                items.append(item.split(" "))
-            commands.append(items)
-
+        commands = fclr.get_Commands(message.content)
         command = commands[1].upper()
 
         #  Special feature cases
@@ -27,27 +14,12 @@ async def main(message, features, records):
 
         for feature in features:
             if command == feature.command:
-                #  Arguments validations
-                if type(feature.nargs) == list:
-                    if len(commands)-2 in feature.nargs:
-                        arguments = [commands[i+2] for i in range(len(commands)-2)]
-                elif len(commands)-2 == feature.nargs: 
-                    arguments = [commands[i+2] for i in range(len(commands)-2)]
-                else:
+                params = fclr.get_Args(commands, feature, records, message)
+                if params is None:
                     await message.channel.send(f"{feature.command} requires {feature.nargs} arguments.")
                     return
 
                 try:
-                    params = []
-                    if not feature.nargs == 0:
-                        params.append(arguments)
-
-                    if feature.records_Required:
-                        params.append(records)
-
-                    if feature.message_Required:
-                        params.append(message)
-
                     response = feature.view_Function(*params)
                     await message.channel.send(response)
                     return
@@ -72,11 +44,8 @@ def today():
 
 
 def praise():
-    return "(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧"
-
-
-def events(args):
-    pass
+    response = "(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧"
+    return response
 
 
 def notes(args, records):
@@ -89,8 +58,9 @@ def notes(args, records):
                 entries = args[2]
                 names = ""
                 for entry in entries:
-                    names += entry[0] + " "
-                    fclr.add_Note(records=records, topic=topic, name=entry[0], item=entry[1])
+                    name = entry[0].upper()
+                    names += name + " "
+                    fclr.add_Note(records=records, topic=topic, name=name, item=entry[1])
 
                 response = f"Noted {names} in topic {topic}."
                 return response
@@ -105,7 +75,6 @@ def notes(args, records):
         except IndexError:
             print("arguments error raised")
             return "Missing arguments."
-
 
     elif action == "DELETE":
         topic = args[1].upper()
@@ -154,8 +123,9 @@ def events(args, records):
                 entries = args[2]
                 names = ""
                 for entry in entries:
-                    names += entry[0] + " "
-                    fclr.add_Event(records=records, topic=topic, name=entry[0], date=entry[1])
+                    name = entry[0].upper()
+                    names += name + " "
+                    fclr.add_Event(records=records, topic=topic, name=name, date=entry[1])
 
                 response = f"Events {names} added in topic {topic}."
                 return response
@@ -170,7 +140,6 @@ def events(args, records):
         except IndexError:
             print("arguments error raised")
             return "Missing Arguments."
-
 
     elif action == "DELETE":
         topic = args[1].upper()
