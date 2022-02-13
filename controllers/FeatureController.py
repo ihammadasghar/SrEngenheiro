@@ -87,3 +87,59 @@ def delete_Event(records, topic, name):
 def delete_Events_Topic(records, topic):
     deleted = records.remove(table="EVENTS", topic=topic)
     return deleted
+
+
+def get_Commands(command):
+    parts = command.split("\n")
+    commands =  parts[0].split('"')
+    if len(commands) == 3:
+        quotes_text = commands[1]
+        commands = commands[0].split(" ")
+        commands.pop()
+        commands.append(quotes_text)
+    else:
+        commands = commands[0].split(" ")
+
+    if len(commands) < 2:
+        return ["sr!", "hi"]
+    
+    if len(parts) > 1:
+        items = []
+        for item in parts[1:]:
+            item = item.split('"')
+            if len(item) == 3:
+                quotes_text = item[1]
+                item = item[0].split(" ")
+                item.pop()
+                item.append(quotes_text)
+            else:
+                item = item[0].split(" ")
+            items.append(item)
+        commands.append(items)
+
+    return commands
+
+
+def get_Args(commands, feature, records, message):
+    #  Arguments validations
+    if type(feature.nargs) == list:
+        if len(commands)-2 in feature.nargs:
+            arguments = [commands[i+2] for i in range(len(commands)-2)]
+        else:
+            return None
+
+    elif len(commands)-2 == feature.nargs: 
+        arguments = [commands[i+2] for i in range(len(commands)-2)]
+    else:
+        return None
+
+    params = []
+    if not feature.nargs == 0:
+        params.append(arguments)
+
+    if feature.records_Required:
+        params.append(records)
+
+    if feature.message_Required:
+        params.append(message)
+    return params
