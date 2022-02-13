@@ -9,9 +9,9 @@ def get_Date_Today():
 
 
 def get_Commands_Description(features):
-    text = "COMMANDS"
+    text = "COMMANDS\n"
     for feature in features:
-        text += "\n-> " + feature.description
+        text += feature.description + "\n\n"
     
     return text
 

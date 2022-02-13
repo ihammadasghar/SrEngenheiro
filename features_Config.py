@@ -5,40 +5,40 @@ from views.response import *
 greeting_feature =  Feature(command="HI", 
                             nargs=0, 
                             view_Function=greet, 
-                            description="Hi: greetings!",
+                            description="**-> Hi**\n`sr! hi`",
                             message_Required=True
                             )
 
 current_day_feature = Feature(command="TODAY",
                             nargs=0,
                             view_Function=today,
-                            description="TODAY: Tells the current date."
+                            description="**-> Date today**\n`sr! today`"
                             )               
 
 praise_feature = Feature(command="GOOD-BOT",
                             nargs=0, 
                             view_Function=praise,
-                            description="PRAISE: ???."
+                            description="**-> Praise**\n`sr! Good-Bot` :)"
                             )
     
 help_feature = Feature(command="HELP", 
                             nargs=0, 
                             view_Function=help,
-                            description="HELP: Lists all commands."
+                            description="**-> Help**\n`sr help`"
                             )
 
 events_feature = Feature(command="EVENTS", 
                             nargs=[2, 3, 4], 
                             view_Function=events, 
                             records_Required=True,
-                            description="EVENTS [action] [topic] [name] [date]: Adds events (e.g. event add Testes AP 22/4/2022)\n Possible Actions:\n  - Add\n  - Delete\n  - Get"
+                            description="**-> Events**\n`sr! events [add/get/delete] [topic] [name] [Day/Month/Year]\nsr! events Add Testes Math 22/4/2022`\nAdding multiple events:\n`sr! events Add Testes\nMath 22/4/2022\nEnglish 21/4/2022`"
                             )
 
 notes_feature = Feature(command="NOTES", 
                         nargs=[2, 3, 4], 
                         view_Function=notes,
                         records_Required=True, 
-                        description="NOTES [action] [topic] [name] [item]: Makes notes (e.g. notes add Links youtube https://youtube.com)\n  Possible Actions:\n  - Add\n  - Delete\n  - Get"
+                        description='**-> Notes**\n`sr! notes [add/get/delete] [topic] [name] [item]\nsr! notes add Gods Thor "The strongest!"`\nAdding multiple notes:\n`sr! notes add Gods\nZeus "Thunder innit"\nAries "The god of war"`'
                         )
 
 #  Add the initialized feature here
