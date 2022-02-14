@@ -116,7 +116,7 @@ def urgent_Events(records):
                     text += f"**-> {event}** `Due in:` **{days_left} days**\n" 
     return text
 
-
+ 
 def delete_Event(records, topic, name):
     deleted = records.remove(table="EVENTS", topic=topic, name=name)
     return deleted

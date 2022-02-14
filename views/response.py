@@ -33,7 +33,12 @@ async def main(message, features, records):
 
 
 def greet(message):
-    response = f"Hi {message.author.nick}! `sr! help` to see how I can help"
+    nickname = message.author.nick
+    name = message.author.display_name
+    if nickname == None:
+        response = f"Hi {name}! `sr! help` to see how I can help"
+    else:
+        response = f"Hi {nickname}! `sr! help` to see how I can help"
     return response
 
 
