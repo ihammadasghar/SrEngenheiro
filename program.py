@@ -1,9 +1,15 @@
-from controllers.FeatureController import FeatureController
-from models.Server import Server
+from http import server
+from pyexpat import features
 from models.Records import Records
+from models.Server import Server
+from features_Config import features
+from views.response import main
+import pickle
+from os import remove
 import discord
 import os
 from dotenv import load_dotenv
+
 
 if __name__ == "__main__":
     load_dotenv()
@@ -19,39 +25,48 @@ if __name__ == "__main__":
         if message.author == bot.user:
             return
 
-        if message.content.startswith("sr!"):
-            commands =  message.content.split(" ")
-            command = commands[1].upper()
+        data_Channel = bot.get_channel(id=941397535594008587)
+        data_Messages = await data_Channel.history(limit=500).flatten()
 
-            data_Channel = discord.utils.get(message.guild.channels, name="bot-data")
-            if not data_Channel:
-                await message.channel.send("Sorry, couldn't find bot-data channel.")
-                return
+        guild_ID = message.guild.id
+        record_Message = None
+        for m in data_Messages:
+            if m.content.startswith(str(guild_ID)):
+                record_Message = m
 
-            data_Messages = await data_Channel.history(limit=500).flatten()
+        server = Server(record_Message=record_Message, data_Channel=data_Channel, ID=guild_ID)
+        records = await load_Records(server)
+        records = Records(records, server)
 
-            records = Records(data_Messages, data_Channel)
-            server =  Server(records, data_Channel)
+        await main(message, features, records)
 
-            feature_Controller = FeatureController(message, server)
-            for feature in feature_Controller.features:
-                if command == feature.command:
-                    #  Arguments validations
-                    if type(feature.args) == list:
-                        if len(commands)-2 in feature.args:
-                            arguments = [commands[i+2] for i in range(len(commands)-2)]
-                    elif len(commands)-2 == feature.args: 
-                        arguments = [commands[i+2] for i in range(len(commands)-2)]
-                    else:
-                        await message.channel.send(f"{feature.command} requires {feature.args} arguments.")
-                        return
-                    try:
-                        await feature.functionality(*arguments)
-                    except:
-                        await message.channel.send(f"Sorry, something went wrong :(")
-                    return
+        if records.updated:
+            await save_Records(records.records, server)
+    
+    async def load_Records(server):
+        #  If record doesn't exist
+        if not server.record_Message:
+            await save_Records({}, server)
+            return {}
+        
+        file = await server.record_Message.attachments[0].to_file()
+        file = file.fp
 
-            await message.channel.send(f"Sorry, I dont understand")
-            return
+        data = pickle.load(file)
+        return data['Records']
+
+    async def save_Records(records, server):
+        if server.record_Message:
+            await server.record_Message.delete()
+        data = {"Server_ID": server.ID, "Records": records}
+
+        filepath = f"./{server.ID}"
+        with open(filepath, mode="wb") as file:
+            pickle.dump(data, file)
+
+
+        file = discord.File(filepath)
+        await server.data_Channel.send(content=str(server.ID), file=file)
+        remove(filepath)
 
     bot.run(os.getenv("TOKEN"))
