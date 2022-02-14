@@ -58,6 +58,6 @@ notes_feature = Feature(command="NOTES",
 
 #  Add the initialized feature here
 
-features = [greeting_feature, current_day_feature, praise_feature,scold_feature, help_feature, events_feature, notes_feature]
+features = [greeting_feature, current_day_feature, praise_feature, scold_feature, help_feature, events_feature, notes_feature]
 
 
