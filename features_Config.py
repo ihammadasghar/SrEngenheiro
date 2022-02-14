@@ -21,11 +21,13 @@ praise_feature = Feature(command="GOOD-BOT",
                             description="**-> Praise**\n```sr! Good-Bot```"
                             )
 
+
 scold_feature = Feature(command="BAD-BOT",
                             nargs=0, 
                             view_Function=scold,
                             description="**-> Scold**\n```sr! Bad-Bot```"
                             )
+
     
 help_feature = Feature(command="HELP", 
                             nargs=0, 
@@ -38,6 +40,7 @@ events_feature = Feature(command="EVENTS",
                             view_Function=events, 
                             records_Required=True,
                             description="**-> Events**\n```sr! events [add/get/urgent/delete] [topic] [name] [Day/Month/Year]\nsr! events Add Tests Math 22/4/2022```\nAdding multiple events\n```sr! events Add Tests\nMath 22/4/2022\nEnglish 21/4/2022```"
+
                             )
 
 notes_feature = Feature(command="NOTES", 
@@ -48,4 +51,5 @@ notes_feature = Feature(command="NOTES",
                         )
 
 #  Add the initialized feature here
+
 features = [greeting_feature, current_day_feature, praise_feature,scold_feature, help_feature, events_feature, notes_feature]

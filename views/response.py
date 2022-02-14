@@ -19,26 +19,28 @@ async def main(message, features, records):
                     await message.channel.send(f"{feature.command} requires {feature.nargs} arguments.")
                     return
 
+
                 #try:
                 response = feature.view_Function(*params)
                 await message.channel.send(response)
                 return
 
-                #except:
-                 #   await message.channel.send(f"Sorry, something went wrong :(")
-                #return
+      
+                return
 
         await message.channel.send(f"Sorry, I dont understand this command :/")
         return
 
 
 def greet(message):
+
     nickname = message.author.nick
     name = message.author.display_name
     if nickname == None:
         response = f"Hi {name}! `sr! help` to see how I can help"
     else:
         response = f"Hi {nickname}! `sr! help` to see how I can help"
+    response = f"Hi {message.author.nick}! `sr! help` to see how I can help"
     return response
 
 
@@ -51,6 +53,7 @@ def today():
 def praise():
     response = "(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧"
     return response
+
 
 def scold():
     response = "ಥ_ಥ"
@@ -183,6 +186,7 @@ def events(args, records):
             return f"Couldn't find events on topic {topic}."
         return topic_Events
         
+
     elif action == "URGENT":
         if len(args) == 1:
             response = fclr.urgent_Events(records)
