@@ -38,18 +38,22 @@ events_feature = Feature(command="EVENTS",
                             nargs=[1, 2, 3, 4], 
                             view_Function=events, 
                             records_Required=True,
-                            description="**-> Events**\n```sr! events [add/get/urgent/delete] [topic] [name] [Day/Month/Year]\nsr! events Add Tests Math 22/4/2022```\nAdding multiple events\n```sr! events Add Tests\nMath 22/4/2022\nEnglish 21/4/2022```"
-                            nargs=[2, 3, 4], 
-                            view_Function=events, 
-                            records_Required=True,
-                            description="**-> Events**\n```sr! events [add/get/delete] [topic] [name] [Day/Month/Year]\nsr! events Add Tests Math 22/4/2022```\nAdding multiple events\n```sr! events Add Tests\nMath 22/4/2022\nEnglish 21/4/2022```"
+                            description="""**-> Events**\n
+                            ```sr! events [add/get/delete] [topic] [name] [Day/Month/Year]\n
+                            sr! events Add Tests Math 22/4/2022```\n-> Events in the next 7 days\n
+                            ```sr! events urgent```\nAdding multiple events\n
+                            ```sr! events Add Tests\nMath 22/4/2022\nEnglish 21/4/2022```"""
                           )
 
 notes_feature = Feature(command="NOTES", 
                         nargs=[2, 3, 4], 
                         view_Function=notes,
                         records_Required=True, 
-                        description='**-> Notes**\n```sr! notes [add/get/delete] [topic] [name] [item]\nsr! notes add Gods Thor "The strongest!"```\nAdding multiple notes\n```sr! notes add Gods\nZeus "Thunder innit"\nAries "The god of war"```'
+                        description="""**-> Notes**\n
+                        ```sr! notes [add/get/delete] [topic] [name] [item]\n
+                        sr! notes add Gods Thor "The strongest!"```\n
+                        Adding multiple notes\n```sr! notes add Gods\n
+                        Zeus "Thunder innit"\nAries "The god of war"```"""
                         )
 
 #  Add the initialized feature here

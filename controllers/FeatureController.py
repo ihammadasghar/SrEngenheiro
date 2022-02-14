@@ -1,5 +1,4 @@
-import datetime
-from datetime import date
+from datetime import datetime, date
 
 
 def get_Date_Today():
@@ -114,42 +113,36 @@ def get_Events_Topic(records, topic):
     return text
 
 
-def days_left(date_1,date_2):
-    return (date_2-date_1).days
-
-
 def urgent_Events(records):
-    today = date.today()
-    date_today = today.strftime("%Y/%m/%d")
-    d_today = date_today.split("/")
-    date_today = date(int(d_today[0]), int(d_today[1]), int(d_today[2]))
+    date_Today = get_Date_Today().split("/")
+    date_Today = list(map(int, date_Today))
+    date_Today = date(date_Today[2], date_Today[1], date_Today[0])
+
     table = records.get(table="EVENTS")
-    topics_list = []
-    for topic in table.items():
-        topics_list.append(topic)
-    events_list = []
-    for topic in topics_list:
-        for event in topic[1].items():
-            events_list.append(event)
-    if not events_list:
+    events = []
+    for topic in table.keys():
+        for event in table[topic].items():
+            events.append(event)
+
+    if events == []:
         return None
 
-    #  Sorting events acording to dates
-    events_list = dict(sorted(events_list, key=lambda x: datetime.datetime.strptime(x[1], '%d/%m/%Y')))
-
+    #  Sorting and events acording to dates
+    events.sort(key=lambda x: datetime.strptime(x[1], '%d/%m/%Y'))
+    
     text = f"**Urgent events:**\n"
-    for event in events_list.keys():
-        date_list = events_list[event].split("/")
-        date_event = date(int(date_list[2]),int(date_list[1]),int(date_list[0]))
-        days_left = num_days(date_event,date_today)*-1
-        if  7>= days_left >= 0:
-            if days_left < 1:
-                text += f"**-> {event}** `Is due today!`\n" 
+    for event in events:
+        event_Date = event[1].split("/")
+        event_Date = list(map(int, event_Date))
+        event_Date = date(event_Date[2], event_Date[1], event_Date[0])
+        days_Left = (event_Date-date_Today).days
+        if  7>= days_Left:
+            if days_Left == 1:
+                text += f"**-> {event[0]}** `Is due today!`\n" 
+            elif days_Left == 1:
+                text += f"**-> {event[0]}** `Due in:` **{days_Left} day**\n" 
             else:
-                if days_left == 1:
-                    text += f"**-> {event}** `Due in:` **{days_left} day**\n" 
-                else:
-                    text += f"**-> {event}** `Due in:` **{days_left} days**\n" 
+                text += f"**-> {event[0]}** `Due in:` **{days_Left} days**\n" 
     return text
 
 
