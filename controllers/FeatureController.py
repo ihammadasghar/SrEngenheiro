@@ -31,6 +31,7 @@ def get_Note(records, topic, name):
     return text
 
 
+
 def get_Notes_Topic(records, topic):
     notes = records.get(table="NOTES", topic=topic)
     if not notes:
@@ -66,6 +67,43 @@ def get_Event(records, topic, name):
     return text
 
 
+
+def get_Notes_Topic(records, topic):
+    notes = records.get(table="NOTES", topic=topic)
+    if not notes:
+        return None
+
+    text = f"**Notes on topic {topic}:**\n"
+    for name in notes.keys():
+        text += f"**-> {name}** ```{notes[name]}```\n" 
+    return text
+
+
+def delete_Note(records, topic, name):
+    deleted = records.remove(table="NOTES", topic=topic, name=name)
+    return deleted
+
+
+def delete_Notes_Topic(records, topic):
+    deleted = records.remove(table="NOTES", topic=topic)
+    return deleted
+
+
+def add_Event(topic, name, date, records):
+    event = {name: date}
+    records.update(table="EVENTS", topic=topic, records=event)
+    return
+
+
+def get_Event(records, topic, name):
+    event = records.get(table="EVENTS", topic=topic)
+    if not event:
+        return None
+    text = f"**Event on topic {topic}:\n-> {name}** `{event[name]}`"
+    return text
+
+
+
 def get_Events_Topic(records, topic):
     events = records.get(table="EVENTS", topic=topic)
     if not events:
@@ -78,6 +116,7 @@ def get_Events_Topic(records, topic):
     for name in events.keys():
         text += f"**-> {name}** `{events[name]}`\n" 
     return text
+
 
 def num_days(date_1,date_2):
     return (date_2-date_1).days
@@ -115,6 +154,7 @@ def urgent_Events(records):
                 else:
                     text += f"**-> {event}** `Due in:` **{days_left} days**\n" 
     return text
+
 
 
 def delete_Event(records, topic, name):
