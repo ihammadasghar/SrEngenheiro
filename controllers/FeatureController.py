@@ -1,6 +1,5 @@
 import datetime
 from datetime import date
-from pydoc_data.topics import topics
 
 
 def get_Date_Today():
@@ -31,7 +30,6 @@ def get_Note(records, topic, name):
     return text
 
 
-
 def get_Notes_Topic(records, topic):
     notes = records.get(table="NOTES", topic=topic)
     if not notes:
@@ -67,7 +65,6 @@ def get_Event(records, topic, name):
     return text
 
 
-
 def get_Notes_Topic(records, topic):
     notes = records.get(table="NOTES", topic=topic)
     if not notes:
@@ -101,7 +98,6 @@ def get_Event(records, topic, name):
         return None
     text = f"**Event on topic {topic}:\n-> {name}** `{event[name]}`"
     return text
-
 
 
 def get_Events_Topic(records, topic):
@@ -118,8 +114,9 @@ def get_Events_Topic(records, topic):
     return text
 
 
-def num_days(date_1,date_2):
+def days_left(date_1,date_2):
     return (date_2-date_1).days
+
 
 def urgent_Events(records):
     today = date.today()
@@ -154,7 +151,6 @@ def urgent_Events(records):
                 else:
                     text += f"**-> {event}** `Due in:` **{days_left} days**\n" 
     return text
-
 
 
 def delete_Event(records, topic, name):
