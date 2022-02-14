@@ -19,14 +19,9 @@ async def main(message, features, records):
                     await message.channel.send(f"{feature.command} requires {feature.nargs} arguments.")
                     return
 
-                #try:
                 response = feature.view_Function(*params)
                 await message.channel.send(response)
                 return
-
-                #except:
-                 #   await message.channel.send(f"Sorry, something went wrong :(")
-                #return
 
         await message.channel.send(f"Sorry, I dont understand this command :/")
         return
@@ -51,6 +46,7 @@ def today():
 def praise():
     response = "(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧"
     return response
+
 
 def scold():
     response = "ಥ_ಥ"
@@ -186,20 +182,10 @@ def events(args, records):
     elif action == "URGENT":
         if len(args) == 1:
             response = fclr.urgent_Events(records)
-            return response
-        topic = args[1].upper()
-        if len(args) == 2:
-            name = args[2].upper()
-            event = fclr.get_Event(topic=topic, name=name, records=records)
-            if not event:
-                return f"Couldn't find event {name}."
-            return event
+            if not response:
+                response = "Nothing urgent, no events in the next 7 days."
+            return response 
 
-        topic_Events = fclr.urgent_Events(topic=topic, records=records)
-        if not topic_Events:
-            return f"Couldn't find events on topic {topic}."
-        return topic_Events
-        
     else:
         return f"I don't know how to perform the action {action}."
 
