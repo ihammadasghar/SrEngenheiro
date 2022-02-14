@@ -1,5 +1,4 @@
-import datetime
-from datetime import date
+from datetime import datetime, date
 
 
 def get_Date_Today():
@@ -65,6 +64,41 @@ def get_Event(records, topic, name):
     return text
 
 
+def get_Notes_Topic(records, topic):
+    notes = records.get(table="NOTES", topic=topic)
+    if not notes:
+        return None
+
+    text = f"**Notes on topic {topic}:**\n"
+    for name in notes.keys():
+        text += f"**-> {name}** ```{notes[name]}```\n" 
+    return text
+
+
+def delete_Note(records, topic, name):
+    deleted = records.remove(table="NOTES", topic=topic, name=name)
+    return deleted
+
+
+def delete_Notes_Topic(records, topic):
+    deleted = records.remove(table="NOTES", topic=topic)
+    return deleted
+
+
+def add_Event(topic, name, date, records):
+    event = {name: date}
+    records.update(table="EVENTS", topic=topic, records=event)
+    return
+
+
+def get_Event(records, topic, name):
+    event = records.get(table="EVENTS", topic=topic)
+    if not event:
+        return None
+    text = f"**Event on topic {topic}:\n-> {name}** `{event[name]}`"
+    return text
+
+
 def get_Events_Topic(records, topic):
     events = records.get(table="EVENTS", topic=topic)
     if not events:
@@ -76,6 +110,39 @@ def get_Events_Topic(records, topic):
     text = f"**Events on topic {topic}:**\n"
     for name in events.keys():
         text += f"**-> {name}** `{events[name]}`\n" 
+    return text
+
+
+def urgent_Events(records):
+    date_Today = get_Date_Today().split("/")
+    date_Today = list(map(int, date_Today))
+    date_Today = date(date_Today[2], date_Today[1], date_Today[0])
+
+    table = records.get(table="EVENTS")
+    events = []
+    for topic in table.keys():
+        for event in table[topic].items():
+            events.append(event)
+
+    if events == []:
+        return None
+
+    #  Sorting and events acording to dates
+    events.sort(key=lambda x: datetime.strptime(x[1], '%d/%m/%Y'))
+    
+    text = f"**Urgent events:**\n"
+    for event in events:
+        event_Date = event[1].split("/")
+        event_Date = list(map(int, event_Date))
+        event_Date = date(event_Date[2], event_Date[1], event_Date[0])
+        days_Left = (event_Date-date_Today).days
+        if  7>= days_Left:
+            if days_Left == 1:
+                text += f"**-> {event[0]}** `Is due today!`\n" 
+            elif days_Left == 1:
+                text += f"**-> {event[0]}** `Due in:` **{days_Left} day**\n" 
+            else:
+                text += f"**-> {event[0]}** `Due in:` **{days_Left} days**\n" 
     return text
 
 
