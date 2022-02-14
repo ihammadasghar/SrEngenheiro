@@ -13,7 +13,6 @@ def get_Commands_Description(features):
     text = "**COMMANDS**\n"
     for feature in features:
         text += feature.description + "\n"
-    
     return text
 
 
