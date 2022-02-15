@@ -21,25 +21,52 @@ class Records:
 
         return None
 
-
-    def update(self, records, table=None, topic=None):
-        old_Records = self.records
-
-        if table:
-            if not table in old_Records.keys():
-                old_Records[table] = {}
+    
+    def create(self, records, table, topic=None):
+        if records:
+            already_exists = self.exists(table, topic, records.keys()[0])
+            if not already_exists:
+                self.records[table][topic].update(records)
+                self.updated = True
+                return True
+            return False
+        
+        
+        already_exists = self.exists(table, topic)
+        if not already_exists:
+            self.records[table].update(records)
+            self.updated = True
+            return True
+        return False
             
-            if not topic:
-                old_Records[table].update(records)
-            
-            else:
-                if not topic in old_Records[table].keys():
-                    old_Records[table][topic] =  {}
-                old_Records[table][topic].update(records)
-        else:
-            self.records = records
+    
 
-        self.updated = True
+    def exists(self, table, topic=None, name=None):
+        if table in self.records.keys():
+            if topic:
+                if topic in self.records[table].keys():
+                    if name:
+                        if name in self.records[table][topic].keys():
+                            return True
+                        return False
+                    return True
+                return False
+            return True
+        return False
+
+
+    def update(self, records, table, topic=None):
+        if topic:
+            exists = self.exist(table, topic, records.keys()[0])
+            if exists:
+                self.records[table][topic].update(records)
+                self.updated = True
+            return False
+        exist = self.exists(table, topic)
+        if exist:
+            self.records[table].update(records)
+            self.updated = True
+        return False
     
 
     def remove(self, table, topic=None, name=None):
