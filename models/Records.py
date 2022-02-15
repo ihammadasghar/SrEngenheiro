@@ -22,23 +22,13 @@ class Records:
         return None
 
     
-    def create(self, records, table, topic=None):
-        if records:
-            already_exists = self.exists(table, topic, records.keys()[0])
-            if not already_exists:
-                self.records[table][topic].update(records)
-                self.updated = True
-                return True
-            return False
-        
-        
-        already_exists = self.exists(table, topic)
+    def create(self, table, topic, name, item):
+        already_exists = self.exists(table, topic, name)
         if not already_exists:
-            self.records[table].update(records)
+            self.records[table][topic].update({name: item})
             self.updated = True
             return True
         return False
-            
     
 
     def exists(self, table, topic=None, name=None):
@@ -55,17 +45,27 @@ class Records:
         return False
 
 
-    def update(self, records, table, topic=None):
+    def update(self, records, table, topic=None, name=None, item=None):
         if topic:
-            exists = self.exist(table, topic, records.keys()[0])
+            exists = self.exist(table, topic)
             if exists:
+                if name:
+                    exists = self.exist(table, topic, name)
+                    if exists:
+                        self.records[table][topic][name] = item
+                        self.updated = True
+                        return True
+                    return False
                 self.records[table][topic].update(records)
                 self.updated = True
+                return True
             return False
-        exist = self.exists(table, topic)
+        
+        exist = self.exists(table)
         if exist:
             self.records[table].update(records)
             self.updated = True
+            return True
         return False
     
 
