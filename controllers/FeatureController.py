@@ -15,15 +15,14 @@ def get_Commands_Description(features):
     return text
 
 
+def edit_Note(topic, name, item, records):
+    edited = records.update(table="NOTES", topic=topic, name=name, item=item)
+    return edited
+
+
 def add_Note(topic, name, item, records):
     created = records.create(table="NOTES", topic=topic, name=name, item=item)
     return created
-
-
-def edit_Note(topic, name, item, records):
-    note = {name: item}
-    records.update(table="NOTES", topic=topic, records=note)
-    return
 
 
 def get_Note(records, topic, name):
@@ -55,50 +54,14 @@ def delete_Notes_Topic(records, topic):
     return deleted
 
 
+def edit_Event(topic, name, date, records):
+    edited = records.update(table="EVENTS", topic=topic, name=name, item=item)
+    return edited
+
+
 def add_Event(topic, name, date, records):
     created = records.create(table="EVENTS", topic=topic, name=name, item=date)
     return created
-
-
-def edit_Event(topic, name, date, records):
-    event = {name: date}
-    records.update(table="EVENTS", topic=topic, records=event)
-    return
-
-
-def get_Event(records, topic, name):
-    event = records.get(table="EVENTS", topic=topic)
-    if not event:
-        return None
-    text = f"**Event on topic {topic}:\n-> {name}** `{event[name]}`"
-    return text
-
-
-def get_Notes_Topic(records, topic):
-    notes = records.get(table="NOTES", topic=topic)
-    if not notes:
-        return None
-
-    text = f"**Notes on topic {topic}:**\n"
-    for name in notes.keys():
-        text += f"**-> {name}** ```{notes[name]}```\n" 
-    return text
-
-
-def delete_Note(records, topic, name):
-    deleted = records.remove(table="NOTES", topic=topic, name=name)
-    return deleted
-
-
-def delete_Notes_Topic(records, topic):
-    deleted = records.remove(table="NOTES", topic=topic)
-    return deleted
-
-
-def add_Event(topic, name, date, records):
-    event = {name: date}
-    records.update(table="EVENTS", topic=topic, records=event)
-    return
 
 
 def get_Event(records, topic, name):
