@@ -16,9 +16,8 @@ def get_Commands_Description(features):
 
 
 def add_Note(topic, name, item, records):
-    note = {name: item}
-    records.update(table="NOTES", topic=topic, records=note)
-    return
+    created = records.create(table="NOTES", topic=topic, name=name, item=item)
+    return created
 
 
 def edit_Note(topic, name, item, records):
@@ -57,9 +56,8 @@ def delete_Notes_Topic(records, topic):
 
 
 def add_Event(topic, name, date, records):
-    event = {name: date}
-    records.update(table="EVENTS", topic=topic, records=event)
-    return
+    created = records.create(table="EVENTS", topic=topic, name=name, item=date)
+    return created
 
 
 def edit_Event(topic, name, date, records):
@@ -134,8 +132,8 @@ def delete_Notes_Topic(records, topic):
 
 def add_Event(topic, name, date, records):
     event = {name: date}
-    records.update(table="EVENTS", topic=topic, records=event)
-    return
+    created = records.create(table="EVENTS", topic=topic, records=event)
+    return created
 
 
 def get_Event(records, topic, name):

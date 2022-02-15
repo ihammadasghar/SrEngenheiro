@@ -62,19 +62,25 @@ def notes(args, records):
             if type(args[2]) == list:
                 entries = args[2]
                 names = ""
+                added = True
                 for entry in entries:
                     name = entry[0].upper()
-                    names += name + " "
-                    fclr.add_Note(records=records, topic=topic, name=name, item=entry[1])
-
-                response = f"Noted {names} in topic {topic}."
+                    names += name + ", "
+                    added = fclr.add_Note(records=records, topic=topic, name=name, item=entry[1])
+                if added:
+                    response = f"Noted {names} in topic {topic}."
+                    return response
+                response = f"One or more of notes {names} already exists in topic {topic}."
                 return response
 
             name = args[2].upper()
             item = args[3].upper()
-            fclr.add_Note(records=records, topic=topic, name=name, item=item)
+            added = fclr.add_Note(records=records, topic=topic, name=name, item=item)
 
-            response = f"Noted {name} in topic {topic}."
+            if added:
+                response = f"Noted {name} in topic {topic}."
+                return response
+            response = f"A note with the name {name} already exists in topic {topic}."
             return response
 
         except IndexError:
@@ -153,19 +159,25 @@ def events(args, records):
             if type(args[2]) == list:
                 entries = args[2]
                 names = ""
+                added = True
                 for entry in entries:
                     name = entry[0].upper()
-                    names += name + " "
-                    fclr.add_Event(records=records, topic=topic, name=name, date=entry[1])
-
-                response = f"Events {names} added in topic {topic}."
+                    names += name + ", "
+                    added = fclr.add_Event(records=records, topic=topic, name=name, date=entry[1])
+                if added:
+                    response = f"Events {names} added in topic {topic}."
+                    return response
+                response = f"One or more of events {names} already exists in topic {topic}."
                 return response
 
             name = args[2].upper()
             date = args[3].upper()
-            fclr.add_Event(records=records, topic=topic, name=name, date=date)
+            added = fclr.add_Event(records=records, topic=topic, name=name, date=date)
 
-            response = f"Event {name} added in topic {topic}."
+            if added:
+                response = f"Event {name} added in topic {topic}."
+                return response
+            response = f"Event {name} already exists in topic {topic}."
             return response
 
         except IndexError:
