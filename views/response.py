@@ -81,6 +81,32 @@ def notes(args, records):
             print("arguments error raised")
             return "Missing arguments."
 
+    elif action == "EDIT":
+        try:
+            topic = args[1].upper()
+            
+            if type(args[2]) == list:
+                entries = args[2]
+                names = ""
+                for entry in entries:
+                    name = entry[0].upper()
+                    names += name + " "
+                    fclr.edit_Note(records=records, topic=topic, name=name, item=entry[1])
+
+                response = f"Noted {names} in topic {topic}."
+                return response
+
+            name = args[2].upper()
+            item = args[3].upper()
+            fclr.edit_Note(records=records, topic=topic, name=name, item=item)
+
+            response = f"Note {name} edited in topic {topic}."
+            return response
+
+        except IndexError:
+            print("arguments error raised")
+            return "Missing arguments."
+
     elif action == "DELETE":
         topic = args[1].upper()
         if len(args) == 3:
@@ -140,6 +166,32 @@ def events(args, records):
             fclr.add_Event(records=records, topic=topic, name=name, date=date)
 
             response = f"Event {name} added in topic {topic}."
+            return response
+
+        except IndexError:
+            print("arguments error raised")
+            return "Missing Arguments."
+
+    elif action == "EDIT":
+        try:
+            topic = args[1].upper()
+            
+            if type(args[2]) == list:
+                entries = args[2]
+                names = ""
+                for entry in entries:
+                    name = entry[0].upper()
+                    names += name + " "
+                    fclr.edit_Event(records=records, topic=topic, name=name, date=entry[1])
+
+                response = f"Events {names} added in topic {topic}."
+                return response
+
+            name = args[2].upper()
+            date = args[3].upper()
+            fclr.edit_Event(records=records, topic=topic, name=name, date=date)
+
+            response = f"Event {name} edited in topic {topic}."
             return response
 
         except IndexError:

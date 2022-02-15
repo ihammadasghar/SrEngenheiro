@@ -39,10 +39,10 @@ events_feature = Feature(command="EVENTS",
                             view_Function=events, 
                             records_Required=True,
                             description="""**-> Events**\n
-                            ```sr! events [add/get/delete] [topic] [name] [Day/Month/Year]\n
-                            sr! events Add Tests Math 22/4/2022```\n-> Events in the next 7 days\n
-                            ```sr! events urgent```\nAdding multiple events\n
-                            ```sr! events Add Tests\nMath 22/4/2022\nEnglish 21/4/2022```"""
+```sr! events [add/edit/get/delete] [topic] [name] [Day/Month/Year]\n
+sr! events Add Tests Math 22/4/2022```\n-> Events in the next 7 days\n
+```sr! events urgent```\nAdding multiple events\n
+```sr! events Add Tests\nMath 22/4/2022\nEnglish 21/4/2022```"""
                           )
 
 notes_feature = Feature(command="NOTES", 
@@ -50,10 +50,10 @@ notes_feature = Feature(command="NOTES",
                         view_Function=notes,
                         records_Required=True, 
                         description="""**-> Notes**\n
-                        ```sr! notes [add/get/delete] [topic] [name] [item]\n
-                        sr! notes add Gods Thor "The strongest!"```\n
-                        Adding multiple notes\n```sr! notes add Gods\n
-                        Zeus "Thunder innit"\nAries "The god of war"```"""
+```sr! notes [add/edit/get/delete] [topic] [name] [item]\n
+sr! notes add Gods Thor "The strongest!"```\n
+Adding multiple notes\n```sr! notes add Gods\n
+Zeus "Thunder innit"\nAries "The god of war"```"""
                         )
 
 #  Add the initialized feature here

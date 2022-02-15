@@ -21,6 +21,12 @@ def add_Note(topic, name, item, records):
     return
 
 
+def edit_Note(topic, name, item, records):
+    note = {name: item}
+    records.update(table="NOTES", topic=topic, records=note)
+    return
+
+
 def get_Note(records, topic, name):
     note = records.get(table="NOTES", topic=topic)
     if not note:
@@ -51,6 +57,12 @@ def delete_Notes_Topic(records, topic):
 
 
 def add_Event(topic, name, date, records):
+    event = {name: date}
+    records.update(table="EVENTS", topic=topic, records=event)
+    return
+
+
+def edit_Event(topic, name, date, records):
     event = {name: date}
     records.update(table="EVENTS", topic=topic, records=event)
     return
