@@ -55,47 +55,12 @@ def delete_Notes_Topic(records, topic):
 
 
 def edit_Event(topic, name, date, records):
-    edited = records.update(table="EVENTS", topic=topic, name=name, item=item)
+    edited = records.update(table="EVENTS", topic=topic, name=name, item=date)
     return edited
 
 
 def add_Event(topic, name, date, records):
     created = records.create(table="EVENTS", topic=topic, name=name, item=date)
-    return created
-
-
-def get_Event(records, topic, name):
-    event = records.get(table="EVENTS", topic=topic)
-    if not event:
-        return None
-    text = f"**Event on topic {topic}:\n-> {name}** `{event[name]}`"
-    return text
-
-
-def get_Notes_Topic(records, topic):
-    notes = records.get(table="NOTES", topic=topic)
-    if not notes:
-        return None
-
-    text = f"**Notes on topic {topic}:**\n"
-    for name in notes.keys():
-        text += f"**-> {name}** ```{notes[name]}```\n" 
-    return text
-
-
-def delete_Note(records, topic, name):
-    deleted = records.remove(table="NOTES", topic=topic, name=name)
-    return deleted
-
-
-def delete_Notes_Topic(records, topic):
-    deleted = records.remove(table="NOTES", topic=topic)
-    return deleted
-
-
-def add_Event(topic, name, date, records):
-    event = {name: date}
-    created = records.create(table="EVENTS", topic=topic, records=event)
     return created
 
 
@@ -113,7 +78,7 @@ def get_Events_Topic(records, topic):
         return None
 
     #  Sorting events acording to dates
-    events = dict(sorted(events.items(), key=lambda x: datetime.datetime.strptime(x[1], '%d/%m/%Y')))
+    events = dict(sorted(events.items(), key=lambda x: datetime.strptime(x[1], '%d/%m/%Y')))
 
     text = f"**Events on topic {topic}:**\n"
     for name in events.keys():
@@ -150,7 +115,7 @@ def urgent_Events(records):
             elif days_Left == 1:
                 text += f"**-> {event[0]}** `Due in:` **{days_Left} day**\n" 
             else:
-                text += f"**-> {event[0]}** `Due in:` **{days_Left} days**\n" 
+                text += f"**-> {event[0]}** `Due in:` **{days_Left} days**\n"
     return text
 
 

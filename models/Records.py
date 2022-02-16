@@ -5,53 +5,35 @@ class Records:
         self.updated = False
 
 
-    def get(self, table=None, topic=None):
+    def get(self, table, topic=None, name=None):
         try:
-            if not table and not topic:
-                return self.records
-
-            elif table and not topic:
-                return self.records[table]
-
-            elif table and topic:
+            if name:
+                return self.records[table][topic][name]
+            elif topic:
                 return self.records[table][topic]
+
+            return self.records[table]
 
         except KeyError:
             return None
 
-        return None
-
     
     def create(self, table, topic, name, item):
-        already_exists = self.exists(table, topic, name)
-        if not already_exists:
+        already_existing_record = self.get(table, topic, name)
+        if already_existing_record is None:
             self.records[table][topic].update({name: item})
             self.updated = True
             return True
         return False
-    
-
-    def exists(self, table, topic=None, name=None):
-        if table in self.records.keys():
-            if topic:
-                if topic in self.records[table].keys():
-                    if name:
-                        if name in self.records[table][topic].keys():
-                            return True
-                        return False
-                    return True
-                return False
-            return True
-        return False
 
 
-    def update(self, records, table, topic=None, name=None, item=None):
+    def update(self, table, topic=None, name=None, item=None, records=None):
         if topic:
-            exists = self.exist(table, topic)
-            if exists:
+            existing_record = self.get(table, topic)
+            if existing_record:
                 if name:
-                    exists = self.exist(table, topic, name)
-                    if exists:
+                    existing_record = self.get(table, topic, name)
+                    if existing_record:
                         self.records[table][topic][name] = item
                         self.updated = True
                         return True
@@ -61,8 +43,8 @@ class Records:
                 return True
             return False
         
-        exist = self.exists(table)
-        if exist:
+        existing_record = self.get(table)
+        if existing_record:
             self.records[table].update(records)
             self.updated = True
             return True

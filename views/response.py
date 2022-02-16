@@ -120,7 +120,7 @@ def notes(args, records):
             return f"Couldn't find notes on topic {topic}."
         return topic_Notes
     
-    elif action == "ADD":
+    elif action == "EDIT":
         try:
             topic = args[1].upper()
             
@@ -143,7 +143,7 @@ def notes(args, records):
             edited = fclr.edit_Note(records=records, topic=topic, name=name, item=item)
 
             if edited:
-                response = f"Noted {name} in topic {topic}."
+                response = f"Note {name} edited in topic {topic}."
                 return response
             response = f"Note {name} doesn't exist in topic {topic}."
             return response
