@@ -45,7 +45,7 @@ class Records:
         return False
 
 
-    def update(self, records, table, topic=None, name=None, item=None):
+    def update(self, table, topic=None, name=None, item=None,  records=None):
         if topic:
             exists = self.exist(table, topic)
             if exists:
