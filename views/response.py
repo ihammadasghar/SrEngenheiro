@@ -175,6 +175,16 @@ def notes(args, records):
 
 
 def events(args, records):
+    if len(args) == 0:
+        all_events = fclr.get_Ordered_Events(records)
+        if all_events is None:
+            return "There are no upcoming added events."
+
+        response = "**Upcoming events:**\n"
+        for event in all_events:
+            response += f"-> **({event['Topic']})** {event['Name']} - `{event['Date']}`\n"
+        return response
+
     action =  args[0].upper()
     if action == "ADD":
         if len(args) != 4:

@@ -61,6 +61,22 @@ def delete_Notes_Topic(records, topic):
     deleted = records.remove(table="NOTES", topic=topic)
     return deleted
 
+#  Events
+def get_Ordered_Events(records):
+    events = records.get(table="EVENTS")
+
+    if events is None:
+        return None
+
+    #  Events across all topics
+    all_events = []
+    for topic in events.keys():
+        topic_events = [{"Topic": topic,"Name": name, "Date": events[topic][name]} for name in events[topic].keys()]
+        all_events += topic_events
+
+    all_events.sort(key=lambda x: datetime.strptime(x["Date"], '%d/%m/%Y'))
+    return all_events
+
 
 def edit_Event(topic, name, date, records):
     edited = records.update(table="EVENTS", topic=topic, name=name, item=date)
