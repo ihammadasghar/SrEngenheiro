@@ -29,26 +29,34 @@ help_feature = Feature(command="HELP",
                             description="**-> Help**\n```sr help```"
                             )
 
+events_description ="""**-> Events**
+```sr! events [add/edit/get/delete] [topic] [name] [Day/Month/Year]
+sr! events Add Tests Math 22/4/2022```
+-> Events in the next 7 days
+```sr! events urgent```
+Adding multiple events
+```sr! events Add Tests
+Math 22/4/2022
+English 21/4/2022```"""
 events_feature = Feature(command="EVENTS", 
                             args_required=True, 
                             view_Function=events, 
                             records_Required=True,
-                            description="""**-> Events**\n
-```sr! events [add/edit/get/delete] [topic] [name] [Day/Month/Year]\n
-sr! events Add Tests Math 22/4/2022```\n-> Events in the next 7 days\n
-```sr! events urgent```\nAdding multiple events\n
-```sr! events Add Tests\nMath 22/4/2022\nEnglish 21/4/2022```"""
+                            description=events_description
                           )
 
+notes_description = """**-> Notes**
+```sr! notes [add/edit/get/delete] [topic] [name] [item]
+sr! notes add Gods Thor "The strongest!"```
+Adding multiple notes
+```sr! notes add Gods
+Zeus "Thunder innit"
+Aries "The god of war"```"""
 notes_feature = Feature(command="NOTES", 
                         args_required=True, 
                         view_Function=notes,
                         records_Required=True, 
-                        description="""**-> Notes**\n
-```sr! notes [add/edit/get/delete] [topic] [name] [item]\n
-sr! notes add Gods Thor "The strongest!"```\n
-Adding multiple notes\n```sr! notes add Gods\n
-Zeus "Thunder innit"\nAries "The god of war"```"""
+                        description=notes_description
                         )
 
 #  Add the initialized feature here
