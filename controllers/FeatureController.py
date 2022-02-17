@@ -161,20 +161,9 @@ def get_Commands(command):
 
 
 def get_Args(commands, feature, records, message):
-    #  Arguments validations
-    if type(feature.nargs) == list:
-        if len(commands)-2 in feature.nargs:
-            arguments = [commands[i+2] for i in range(len(commands)-2)]
-        else:
-            return None
-
-    elif len(commands)-2 == feature.nargs: 
-        arguments = [commands[i+2] for i in range(len(commands)-2)]
-    else:
-        return None
-
     params = []
-    if not feature.nargs == 0:
+    if feature.args_required:
+        arguments = [commands[i+2] for i in range(len(commands)-2)]
         params.append(arguments)
 
     if feature.records_Required:
