@@ -33,6 +33,14 @@ def get_Note(records, topic, name):
     return text
 
 
+def get_Notes(records):
+    notes_table = records.get(table="NOTES")
+    note_topic_names = notes_table.keys()
+    if note_topic_names:
+        return note_topic_names
+    return None
+
+
 def get_Notes_Topic(records, topic):
     notes = records.get(table="NOTES", topic=topic)
     if not notes:
@@ -70,6 +78,14 @@ def get_Event(records, topic, name):
         return None
     text = f"**Event on topic {topic}:\n-> {name}** `{event[name]}`"
     return text
+
+
+def get_Events(records):
+    events_table = records.get(table="EVENTS")
+    event_topic_names = events_table.keys()
+    if event_topic_names:
+        return event_topic_names
+    return None
 
 
 def get_Events_Topic(records, topic):

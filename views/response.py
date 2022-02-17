@@ -108,8 +108,20 @@ def notes(args, records):
 
 
     elif action == "GET":
-        if len(args) != 3 and len(args) != 2:
+        if len(args) != 3 and len(args) != 2 and len(args) != 1:
             response = "I don't understand :/\n Correct command to get note:\n`sr! notes get [topic] [name(optional)]`"
+            return response
+
+        #  Get note topic names
+        if len(args) == 1:
+            topic_names = fclr.get_Notes(records)
+            if topic_names is None:
+                return "There are no added notes."
+
+            response = f"**Note topics:**\n"
+            for name in topic_names:
+                response += f"-> {name}\n"
+            
             return response
 
         topic = args[1].upper()
@@ -220,8 +232,20 @@ def events(args, records):
         return response
     
     elif action == "GET":
-        if len(args) != 3 and len(args) != 2:
+        if len(args) != 3 and len(args) != 2 and len(args) != 1:
             response = "I don't understand :/\n Correct command to get event:\n`sr! events get [topic] [name(Optional)]`"
+            return response
+
+        #  Get note topic names
+        if len(args) == 1:
+            topic_names = fclr.get_Events(records)
+            if topic_names is None:
+                return "There are no added events."
+
+            response = f"**Event topics:**\n"
+            for name in topic_names:
+                response += f"-> {name}\n"
+            
             return response
 
         topic = args[1].upper()
