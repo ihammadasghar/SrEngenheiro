@@ -15,10 +15,6 @@ async def main(message, features, records):
         for feature in features:
             if command == feature.command:
                 params = fclr.get_Args(commands, feature, records, message)
-                if params is None:
-                    await message.channel.send(f"{feature.command} requires {feature.nargs} arguments.")
-                    return
-
                 response = feature.view_Function(*params)
                 await message.channel.send(response)
                 return
@@ -56,38 +52,42 @@ def scold():
 def notes(args, records):
     action =  args[0].upper()
     if action == "ADD":
-        try:
-            topic = args[1].upper()
-            
-            if type(args[2]) == list:
-                entries = args[2]
-                names = ""
-                added = True
-                for entry in entries:
-                    name = entry[0].upper()
-                    names += name + ", "
-                    added = fclr.add_Note(records=records, topic=topic, name=name, item=entry[1])
-                if added:
-                    response = f"Noted {names} in topic {topic}."
-                    return response
-                response = f"One or more of notes {names} already exists in topic {topic}."
-                return response
-
-            name = args[2].upper()
-            item = args[3].upper()
-            added = fclr.add_Note(records=records, topic=topic, name=name, item=item)
-
-            if added:
-                response = f"Noted {name} in topic {topic}."
-                return response
-            response = f"A note with the name {name} already exists in topic {topic}."
+        if len(args) != 4:
+            response = "I don't understand :/\nCorrect command to add note:\n`sr! notes add [topic] [name] [content]`"
             return response
 
-        except IndexError:
-            print("arguments error raised")
-            return "Missing arguments."
+        topic = args[1].upper()
+        
+        if type(args[2]) == list:
+            entries = args[2]
+            names = ""
+            added = True
+            for entry in entries:
+                name = entry[0].upper()
+                names += name + ", "
+                added = fclr.add_Note(records=records, topic=topic, name=name, item=entry[1])
+            if added:
+                response = f"Noted {names} in topic {topic}."
+                return response
+            response = f"One or more of notes {names} already exists in topic {topic}."
+            return response
+
+        name = args[2].upper()
+        item = args[3].upper()
+        added = fclr.add_Note(records=records, topic=topic, name=name, item=item)
+
+        if added:
+            response = f"Noted {name} in topic {topic}."
+            return response
+        response = f"A note with the name {name} already exists in topic {topic}."
+        return response
+
 
     elif action == "DELETE":
+        if len(args) != 3 and len(args) != 2:
+            response = "I don't understand :/\nCorrect command to delete note:\n`sr! notes delete [topic] [name(optional)]`"
+            return response
+
         topic = args[1].upper()
         if len(args) == 3:
             name = args[2].upper()
@@ -105,8 +105,13 @@ def notes(args, records):
                 return response
         response = f"Couldn't find notes topic {topic}."
         return response
-    
+
+
     elif action == "GET":
+        if len(args) != 3 and len(args) != 2:
+            response = "I don't understand :/\n Correct command to get note:\n`sr! notes get [topic] [name(optional)]`"
+            return response
+
         topic = args[1].upper()
         if len(args) == 3:
             name = args[2].upper()
@@ -119,38 +124,40 @@ def notes(args, records):
         if not topic_Notes:
             return f"Couldn't find notes on topic {topic}."
         return topic_Notes
-    
+
+
     elif action == "EDIT":
-        try:
-            topic = args[1].upper()
-            
-            if type(args[2]) == list:
-                entries = args[2]
-                names = ""
-                edited = True
-                for entry in entries:
-                    name = entry[0].upper()
-                    names += name + ", "
-                    edited = fclr.edit_Note(records=records, topic=topic, name=name, item=entry[1])
-                if edited:
-                    response = f"Noted {names} edited in topic {topic}."
-                    return response
-                response = f"One or more of notes {names} dont exist in topic {topic}."
-                return response
-
-            name = args[2].upper()
-            item = args[3].upper()
-            edited = fclr.edit_Note(records=records, topic=topic, name=name, item=item)
-
-            if edited:
-                response = f"Note {name} edited in topic {topic}."
-                return response
-            response = f"Note {name} doesn't exist in topic {topic}."
+        if len(args) != 4:
+            response = "I don't understand :/\n Correct command to edit note:\n`sr! notes edit [topic] [name] [content]`"
             return response
 
-        except IndexError:
-            print("arguments error raised")
-            return "Missing arguments."
+        topic = args[1].upper()
+        
+        if type(args[2]) == list:
+            entries = args[2]
+            names = ""
+            edited = True
+            for entry in entries:
+                name = entry[0].upper()
+                names += name + ", "
+                edited = fclr.edit_Note(records=records, topic=topic, name=name, item=entry[1])
+            if edited:
+                response = f"Noted {names} edited in topic {topic}."
+                return response
+            response = f"One or more of notes {names} dont exist in topic {topic}."
+            return response
+
+        name = args[2].upper()
+        item = args[3].upper()
+        edited = fclr.edit_Note(records=records, topic=topic, name=name, item=item)
+
+        if edited:
+            response = f"Note {name} edited in topic {topic}."
+            return response
+        response = f"Note {name} doesn't exist in topic {topic}."
+        return response
+
+
     else:
         return f"I don't know how to perform the action {action}."
 
@@ -158,38 +165,42 @@ def notes(args, records):
 def events(args, records):
     action =  args[0].upper()
     if action == "ADD":
-        try:
-            topic = args[1].upper()
-            
-            if type(args[2]) == list:
-                entries = args[2]
-                names = ""
-                added = True
-                for entry in entries:
-                    name = entry[0].upper()
-                    names += name + ", "
-                    added = fclr.add_Event(records=records, topic=topic, name=name, date=entry[1])
-                if added:
-                    response = f"Events {names} added in topic {topic}."
-                    return response
-                response = f"One or more of events {names} already exists in topic {topic}."
-                return response
-
-            name = args[2].upper()
-            date = args[3].upper()
-            added = fclr.add_Event(records=records, topic=topic, name=name, date=date)
-
-            if added:
-                response = f"Event {name} added in topic {topic}."
-                return response
-            response = f"Event {name} already exists in topic {topic}."
+        if len(args) != 4:
+            response = "I don't understand :/\nCorrect command to add event:\n`sr! events add [topic] [name] [date]`"
             return response
 
-        except IndexError:
-            print("arguments error raised")
-            return "Missing Arguments."
+        topic = args[1].upper()
+        
+        if type(args[2]) == list:
+            entries = args[2]
+            names = ""
+            added = True
+            for entry in entries:
+                name = entry[0].upper()
+                names += name + ", "
+                added = fclr.add_Event(records=records, topic=topic, name=name, date=entry[1])
+            if added:
+                response = f"Events {names} added in topic {topic}."
+                return response
+            response = f"One or more of events {names} already exists in topic {topic}."
+            return response
+
+        name = args[2].upper()
+        date = args[3].upper()
+        added = fclr.add_Event(records=records, topic=topic, name=name, date=date)
+
+        if added:
+            response = f"Event {name} added in topic {topic}."
+            return response
+        response = f"Event {name} already exists in topic {topic}."
+        return response
+
 
     elif action == "DELETE":
+        if len(args) != 3 and len(args) != 2:
+            response = "I don't understand :/\n Correct command to delete event:\n`sr! events delete [topic] [name(Optional)]`"
+            return response
+
         topic = args[1].upper()
         if len(args) == 3:
             name = args[2].upper()
@@ -209,6 +220,10 @@ def events(args, records):
         return response
     
     elif action == "GET":
+        if len(args) != 3 and len(args) != 2:
+            response = "I don't understand :/\n Correct command to get event:\n`sr! events get [topic] [name(Optional)]`"
+            return response
+
         topic = args[1].upper()
         if len(args) == 3:
             name = args[2].upper()
@@ -221,45 +236,45 @@ def events(args, records):
         if not topic_Events:
             return f"Couldn't find events on topic {topic}."
         return topic_Events
-        
+
+
     elif action == "URGENT":
-        if len(args) == 1:
-            response = fclr.urgent_Events(records)
-            if not response:
-                response = "Nothing urgent, no events in the next 7 days."
-            return response 
+        response = fclr.urgent_Events(records)
+        if not response:
+            response = "Nothing urgent, no events in the next 7 days."
+        return response 
     
+
     elif action == "EDIT":
-        try:
-            topic = args[1].upper()
-            
-            if type(args[2]) == list:
-                entries = args[2]
-                names = ""
-                edited = True
-                for entry in entries:
-                    name = entry[0].upper()
-                    names += name + ", "
-                    edited = fclr.add_Edit(records=records, topic=topic, name=name, date=entry[1])
-                if edited:
-                    response = f"Events {names} edited in topic {topic}."
-                    return response
-                response = f"One or more of events {names} don't exist in topic {topic}."
-                return response
-
-            name = args[2].upper()
-            date = args[3].upper()
-            edited = fclr.edit_Event(records=records, topic=topic, name=name, date=date)
-
-            if edited:
-                response = f"Event {name} edited in topic {topic}."
-                return response
-            response = f"Event {name} doesn't exist in topic {topic}."
+        if len(args) != 4:
+            response = "I don't understand :/\n Correct command to edit events:\n`sr! events edit [topic] [name] [date]`"
             return response
 
-        except IndexError:
-            print("arguments error raised")
-            return "Missing Arguments."
+        topic = args[1].upper()
+        
+        if type(args[2]) == list:
+            entries = args[2]
+            names = ""
+            edited = True
+            for entry in entries:
+                name = entry[0].upper()
+                names += name + ", "
+                edited = fclr.add_Edit(records=records, topic=topic, name=name, date=entry[1])
+            if edited:
+                response = f"Events {names} edited in topic {topic}."
+                return response
+            response = f"One or more of events {names} don't exist in topic {topic}."
+            return response
+
+        name = args[2].upper()
+        date = args[3].upper()
+        edited = fclr.edit_Event(records=records, topic=topic, name=name, date=date)
+
+        if edited:
+            response = f"Event {name} edited in topic {topic}."
+            return response
+        response = f"Event {name} doesn't exist in topic {topic}."
+        return response
 
     else:
         return f"I don't know how to perform the action {action}."

@@ -21,6 +21,10 @@ class Records:
     def create(self, table, topic, name, item):
         already_existing_record = self.get(table, topic, name)
         if already_existing_record is None:
+            existing_topic = self.get(table, topic)
+            if existing_topic is None:
+                self.records[table][topic] = {}
+                
             self.records[table][topic].update({name: item})
             self.updated = True
             return True
