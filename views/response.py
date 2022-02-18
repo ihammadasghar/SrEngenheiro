@@ -1,9 +1,10 @@
 from controllers import FeatureController as fclr
+from controllers import ValidationController as vclr
 
 
 async def main(message, features, records):
     if message.content.startswith("sr!"):
-        commands = fclr.get_Commands(message.content)
+        commands = vclr.get_Commands(message.content)
         command = commands[1].upper()
 
         #  Special feature cases
@@ -14,7 +15,7 @@ async def main(message, features, records):
 
         for feature in features:
             if command == feature.command:
-                params = fclr.get_Args(commands, feature, records, message)
+                params = vclr.get_Args(commands, feature, records, message)
                 response = feature.view_Function(*params)
                 await message.channel.send(response)
                 return
@@ -52,7 +53,7 @@ def scold():
 def notes(args, records):
     action =  args[0].upper()
     if action == "ADD":
-        if len(args) != 4:
+        if len(args) != 4 and len(args) != 3:
             response = "I don't understand :/\nCorrect command to add note:\n`sr! notes add [topic] [name] [content]`"
             return response
 
@@ -139,7 +140,7 @@ def notes(args, records):
 
 
     elif action == "EDIT":
-        if len(args) != 4:
+        if len(args) != 4 and len(args) != 3:
             response = "I don't understand :/\n Correct command to edit note:\n`sr! notes edit [topic] [name] [content]`"
             return response
 
@@ -187,7 +188,7 @@ def events(args, records):
 
     action =  args[0].upper()
     if action == "ADD":
-        if len(args) != 4:
+        if len(args) != 4 and len(args) != 3:
             response = "I don't understand :/\nCorrect command to add event:\n`sr! events add [topic] [name] [date]`"
             return response
 
@@ -200,7 +201,7 @@ def events(args, records):
             for entry in entries:
                 name = entry[0].upper()
                 date = entry[1]
-                if fclr.get_Days_Left(date) < 0:
+                if vclr.get_Days_Left(date) < 0:
                     return f"Event **{name}** date `{date}` has already passed.\nIf you still want me to remember it, add a note."
 
                 names += name + ", "
@@ -213,7 +214,7 @@ def events(args, records):
 
         name = args[2].upper()
         date = args[3].upper()
-        if fclr.get_Days_Left(date) < 0:
+        if vclr.get_Days_Left(date) < 0:
             return f"Event **{name}** date `{date}` has already passed.\nIf you still want me to remember it, add a note."
         added = fclr.add_Event(records=records, topic=topic, name=name, date=date)
 
@@ -286,7 +287,7 @@ def events(args, records):
     
 
     elif action == "EDIT":
-        if len(args) != 4:
+        if len(args) != 4 and len(args) != 3:
             response = "I don't understand :/\n Correct command to edit events:\n`sr! events edit [topic] [name] [date]`"
             return response
 
