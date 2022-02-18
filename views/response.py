@@ -67,9 +67,9 @@ def notes(args, records):
                 names += name + ", "
                 added = fclr.add_Note(records=records, topic=topic, name=name, item=entry[1])
             if added:
-                response = f"Noted {names} in topic {topic}."
+                response = f"Noted **{names}** in topic **{topic}**."
                 return response
-            response = f"One or more of notes {names} already exists in topic {topic}."
+            response = f"One or more of notes **{names}** already exists in topic **{topic}**."
             return response
 
         name = args[2].upper()
@@ -77,9 +77,9 @@ def notes(args, records):
         added = fclr.add_Note(records=records, topic=topic, name=name, item=item)
 
         if added:
-            response = f"Noted {name} in topic {topic}."
+            response = f"Noted **{name}** in topic **{topic}**."
             return response
-        response = f"A note with the name {name} already exists in topic {topic}."
+        response = f"A note with the name **{name}** already exists in topic **{topic}**."
         return response
 
 
@@ -93,17 +93,17 @@ def notes(args, records):
             name = args[2].upper()
             is_Deleted = fclr.delete_Note(topic=topic, name=name, records=records)
             if is_Deleted:
-                response = f"Note {name} deleted from topic {topic}."
+                response = f"Note **{name}** deleted from topic **{topic}**."
                 return response
 
-            response = f"Couldn't find note {name}."
+            response = f"Couldn't find note **{name}**."
             return response
 
         is_Deleted = fclr.delete_Notes_Topic(topic=topic, records=records)
         if is_Deleted:
-                response = f"Notes topic {topic} deleted."
+                response = f"Notes topic **{topic}** deleted."
                 return response
-        response = f"Couldn't find notes topic {topic}."
+        response = f"Couldn't find notes topic **{topic}**."
         return response
 
 
@@ -129,12 +129,12 @@ def notes(args, records):
             name = args[2].upper()
             note = fclr.get_Note(topic=topic, name=name, records=records)
             if not note:
-                return f"Couldn't find note {name}."
+                return f"Couldn't find note **{name}**."
             return note
 
         topic_Notes = fclr.get_Notes_Topic(topic=topic, records=records)
         if not topic_Notes:
-            return f"Couldn't find notes on topic {topic}."
+            return f"Couldn't find notes on topic **{topic}**."
         return topic_Notes
 
 
@@ -154,9 +154,9 @@ def notes(args, records):
                 names += name + ", "
                 edited = fclr.edit_Note(records=records, topic=topic, name=name, item=entry[1])
             if edited:
-                response = f"Noted {names} edited in topic {topic}."
+                response = f"Noted **{names}** edited in topic **{topic}**."
                 return response
-            response = f"One or more of notes {names} dont exist in topic {topic}."
+            response = f"One or more of notes **{names}** dont exist in topic **{topic}**."
             return response
 
         name = args[2].upper()
@@ -164,14 +164,14 @@ def notes(args, records):
         edited = fclr.edit_Note(records=records, topic=topic, name=name, item=item)
 
         if edited:
-            response = f"Note {name} edited in topic {topic}."
+            response = f"Note **{name}** edited in topic **{topic}**."
             return response
-        response = f"Note {name} doesn't exist in topic {topic}."
+        response = f"Note **{name}** doesn't exist in topic **{topic}**."
         return response
 
 
     else:
-        return f"I don't know how to perform the action {action}."
+        return f"I don't know how to perform the action **{action}**."
 
 
 def events(args, records):
@@ -199,22 +199,28 @@ def events(args, records):
             added = True
             for entry in entries:
                 name = entry[0].upper()
+                date = entry[1]
+                if fclr.get_Days_Left(date) < 0:
+                    return f"Event **{name}** date `{date}` has already passed.\nIf you still want me to remember it, add a note."
+
                 names += name + ", "
                 added = fclr.add_Event(records=records, topic=topic, name=name, date=entry[1])
             if added:
-                response = f"Events {names} added in topic {topic}."
+                response = f"Events **{names}** added in topic **{topic}**."
                 return response
-            response = f"One or more of events {names} already exists in topic {topic}."
+            response = f"One or more of events **{names}** already exists in topic **{topic}**."
             return response
 
         name = args[2].upper()
         date = args[3].upper()
+        if fclr.get_Days_Left(date) < 0:
+            return f"Event **{name}** date `{date}` has already passed.\nIf you still want me to remember it, add a note."
         added = fclr.add_Event(records=records, topic=topic, name=name, date=date)
 
         if added:
-            response = f"Event {name} added in topic {topic}."
+            response = f"Event **{name}** added in topic **{topic}**."
             return response
-        response = f"Event {name} already exists in topic {topic}."
+        response = f"Event **{name}** already exists in topic **{topic}**."
         return response
 
 
@@ -228,17 +234,17 @@ def events(args, records):
             name = args[2].upper()
             is_Deleted = fclr.delete_Event(topic=topic, name=name, records=records)
             if is_Deleted:
-                response = f"Event {name} deleted from topic {topic}."
+                response = f"Event **{name}** deleted from topic **{topic}**."
                 return response
 
-            response = f"Couldn't find event {name}."
+            response = f"Couldn't find event **{name}**."
             return response
 
         is_Deleted = fclr.delete_Events_Topic(topic=topic, records=records)
         if is_Deleted:
-                response = f"Events topic {topic} deleted."
+                response = f"Events topic **{topic}** deleted."
                 return response
-        response = f"Couldn't find events topic {topic}."
+        response = f"Couldn't find events topic **{topic}**."
         return response
     
     elif action == "GET":
@@ -263,12 +269,12 @@ def events(args, records):
             name = args[2].upper()
             event = fclr.get_Event(topic=topic, name=name, records=records)
             if not event:
-                return f"Couldn't find event {name}."
+                return f"Couldn't find event **{name}**."
             return event
 
         topic_Events = fclr.get_Events_Topic(topic=topic, records=records)
         if not topic_Events:
-            return f"Couldn't find events on topic {topic}."
+            return f"Couldn't find events on topic **{topic}**."
         return topic_Events
 
 
@@ -295,9 +301,9 @@ def events(args, records):
                 names += name + ", "
                 edited = fclr.add_Edit(records=records, topic=topic, name=name, date=entry[1])
             if edited:
-                response = f"Events {names} edited in topic {topic}."
+                response = f"Events **{names}** edited in topic **{topic}**."
                 return response
-            response = f"One or more of events {names} don't exist in topic {topic}."
+            response = f"One or more of events **{names}** don't exist in topic **{topic}**."
             return response
 
         name = args[2].upper()
@@ -305,13 +311,13 @@ def events(args, records):
         edited = fclr.edit_Event(records=records, topic=topic, name=name, date=date)
 
         if edited:
-            response = f"Event {name} edited in topic {topic}."
+            response = f"Event **{name}** edited in topic **{topic}**."
             return response
-        response = f"Event {name} doesn't exist in topic {topic}."
+        response = f"Event **{name}** doesn't exist in topic **{topic}**."
         return response
 
     else:
-        return f"I don't know how to perform the action {action}."
+        return f"I don't know how to perform the action **{action}**."
 
 
 def help(features):
