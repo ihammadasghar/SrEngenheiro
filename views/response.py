@@ -53,7 +53,7 @@ def scold():
 def notes(args, records):
     action =  args[0].upper()
     if action == "ADD":
-        if len(args) != 4:
+        if len(args) != 4 and len(args) != 3:
             response = "I don't understand :/\nCorrect command to add note:\n`sr! notes add [topic] [name] [content]`"
             return response
 
@@ -140,7 +140,7 @@ def notes(args, records):
 
 
     elif action == "EDIT":
-        if len(args) != 4:
+        if len(args) != 4 and len(args) != 3:
             response = "I don't understand :/\n Correct command to edit note:\n`sr! notes edit [topic] [name] [content]`"
             return response
 
@@ -287,7 +287,7 @@ def events(args, records):
     
 
     elif action == "EDIT":
-        if len(args) != 4:
+        if len(args) != 4 and len(args) != 3:
             response = "I don't understand :/\n Correct command to edit events:\n`sr! events edit [topic] [name] [date]`"
             return response
 
