@@ -27,10 +27,10 @@ git checkout -b featurename_feature
 
 3. In feature_Config.py create an instance of the Feature model
 - command: (str) Should be in all caps
-- nargs: (int) number of arguments
+- args_required: (bool) if input arguments from the user are required
 - view_Function: (function refrence) Corresponding view function.
 ```
-feature_name = Feature(command, nargs, view_Function, description="No description", records_Required=False, message_Required=False)
+feature_name = Feature(command, args_required=False, view_Function, description="No description", records_Required=False, message_Required=False)
 ```
 
 4. Add the instantiated feature to the features list at the bottom
@@ -64,25 +64,32 @@ git push origin branch_name
 ## Using Records module
 ### Adding records:
 ```
-#  Create a dictionaries of your data.
-link_Record = {"youtube": "https://youtube.com"}
-
-#  Pass the dictionary to the function to save and the topic and table name
-records.add(table="NOTES", topic="Links", records=link_Record)
+records.create(table="NOTES", topic="Links", name="youtube" item="https://youtube.com")
+```
+### Updating a specific record:
+```
+records.update(table="NOTES", topic="Links", name="youtube" item="https://yt.com")
+```
+### Updating a topic:
+```
+topic_records = records.get(table="NOTES", topic="Links")
+topic_records["youtube"] = "https://yt.com"
+topic_records["facebook"] = "https://fb.com"
+records.update(table="NOTES", topic="Links", records=topic_records)
 ```
 
 ### Getting records:
 ```
 #  Getting one record
-youtube_Link_Record = self.records.get(table="NOTES", topic="Links", record_Name="youtube")
+youtube_Link_Record = records.get(table="NOTES", topic="Links", name="youtube")
 
 #  Getting a list of all records about a topic
-all_Link_Records = records.get(table="NOTES", topic="Links")
+all_Link_Records_dict = records.get(table="NOTES", topic="Links")
 ```
 
 ### Removing records:
 ```
 #  Removing link youtube from the Links topic.
-records.remove(table="NOTES", topic="Links", record_Name="youtube")
+records.remove(table="NOTES", topic="Links", name="youtube")
 
 ```
