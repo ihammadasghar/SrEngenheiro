@@ -59,8 +59,30 @@ notes_feature = Feature(command="NOTES",
                         description=notes_description
                         )
 
+remember_feature = Feature(command="REMEMBER",
+                            args_required=True,
+                            records_Required=True,
+                            message_Required=True,
+                            view_Function=remember_Message,
+                            description="**-> Remember messages/files**:\nReply this command to a message/file:\n```sr! remember [name]```"
+                            )
+
+forget_feature = Feature(command="FORGET",
+                            args_required=True,
+                            records_Required=True,
+                            view_Function=forget_Message,
+                            description="**-> Remember messages/files**:\nReply this command to a message/file:\n```sr! remember [name]```"
+                            )
+
+get_message_feature = Feature(command="GET",
+                            args_required=True,
+                            records_Required=True,
+                            view_Function=get_Message,
+                            description="**-> Remember messages/files**:\nReply this command to a message/file:\n```sr! remember [name]```"
+                            )
+
 #  Add the initialized feature here
-features = [greeting_feature, current_day_feature, praise_feature, scold_feature, help_feature, events_feature, notes_feature]
+features = [greeting_feature, current_day_feature, praise_feature, scold_feature, help_feature, events_feature, notes_feature, get_message_feature, remember_feature, forget_feature]
 
 
 

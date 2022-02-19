@@ -3,6 +3,7 @@ class Records:
         self.records = records
         self.server = server
         self.updated = False
+        self.requested_message_ID = None
 
 
     def get(self, table, topic=None, name=None):
@@ -21,6 +22,10 @@ class Records:
     def create(self, table, topic, name, item):
         already_existing_record = self.get(table, topic, name)
         if already_existing_record is None:
+            existing_table = self.get(table)
+            if existing_table is None:
+                self.records[table] = {}
+                
             existing_topic = self.get(table, topic)
             if existing_topic is None:
                 self.records[table][topic] = {}

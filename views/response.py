@@ -25,12 +25,8 @@ async def main(message, features, records):
 
 
 def greet(message):
-    nickname = message.author.nick
-    if nickname:
-        response = f"Hi {nickname}! `sr! help` to see how I can help"
-    else:
-        name = message.author.display_name
-        response = f"Hi {name}! `sr! help` to see how I can help"
+    name = message.author.display_name
+    response = f"Hi {name}! `sr! help` to see how I can help"
     return response
 
 
@@ -48,6 +44,45 @@ def praise():
 def scold():
     response = "ಥ_ಥ"
     return response
+
+
+def remember_Message(args, records, message):
+    if len(args) != 1 or type(args[0]) == list:
+        return "I don't understand :/\nCorrect command to remember:\n`sr! remember [name]`"
+    
+    if message.reference.message_id == None:
+        return "You need to reply this command to the message I need to remember."
+
+    name = args[0]
+    added = fclr.add_Message(name, message.reference.message_id, records)
+    if added:
+        return f"I'll keep an eye on **{name}**"
+
+    return f"A message with the name **{name}** already exists"
+
+
+def get_Message(args, records):
+    if len(args) != 1 or type(args[0]) == list:
+        return "I don't understand :/\nCorrect command to get remembered message:\n`sr! get [name]`"
+    
+    name = args[0]
+    found = fclr.get_Message(name, records)
+    if found:
+        return f"Remembering **{name}**..."
+
+    return f"I don't remember the message **{name}**"
+
+
+def forget_Message(args, records):
+    if len(args) != 1:
+        return "I don't understand :/\nCorrect command to forget:\n`sr! forget [name]`"
+    
+    name = args[0]
+    deleted = fclr.delete_Message(name, records)
+    if deleted:
+        return f"**{name}** forgotten."
+
+    return f"Couldn't find a message named **{name}**"
 
 
 def notes(args, records):
