@@ -15,7 +15,26 @@ def get_Commands_Description(features):
     
     return text
 
+#  Remembered messages
+def add_Message(name,  message_ID, records):
+    added = records.create(table="MESSAGES", topic="REMEMBERED", name=name, item=message_ID)
+    return added
 
+
+def get_Message(name, records):
+    message_ID = records.get(table="MESSAGES", topic="REMEMBERED", name=name)
+    if message_ID:
+        records.requested_message_ID = message_ID
+        return True
+
+    return False
+
+
+def delete_Message(name, records):
+    removed = records.remove(table="MESSAGES", topic="REMEMBERED", name=name)
+    return removed
+
+#  Notes
 def edit_Note(topic, name, item, records):
     edited = records.update(table="NOTES", topic=topic, name=name, item=item)
     return edited

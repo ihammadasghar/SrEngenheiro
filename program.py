@@ -1,5 +1,3 @@
-from http import server
-from pyexpat import features
 from models.Records import Records
 from models.Server import Server
 from features_Config import features
@@ -42,6 +40,21 @@ if __name__ == "__main__":
 
         if records.updated:
             await save_Records(records.records, server)
+
+        if records.requested_message_ID:
+            found = False
+            r_message = None
+            for channel in bot.get_guild(guild_ID).channels:
+                if r_message:
+                    break
+                try:
+                    r_message = await channel.fetch_message(id=records.requested_message_ID)
+                except:
+                    continue
+            name = r_message.author.display_name
+
+            content = f'**Remembered Message:**\n"{r_message.content}" - **By {name}**'
+            await message.channel.send(content=content, files=r_message.attachments)
     
     async def load_Records(server):
         #  If record doesn't exist
@@ -68,5 +81,6 @@ if __name__ == "__main__":
         file = discord.File(filepath)
         await server.data_Channel.send(content=str(server.ID), file=file)
         remove(filepath)
+
 
     bot.run(os.getenv("TOKEN"))
