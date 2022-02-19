@@ -7,33 +7,32 @@ async def main(message, features, server):
     #  Getting server records
     records = await pclr.load_Records(server)
     
-    if message.content.startswith("sr!"):
-        commands = vclr.get_Commands(message.content)
-        command = commands[1].upper()
+    commands = vclr.get_Commands(message.content)
+    command = commands[1].upper()
 
-        #  Special feature cases
-        if command == "HELP":  #  Case: Requires all feature list
-            response = help(features)
-            await message.channel.send(response)
-            return
-
-        #  Identify feature to execute
-        for feature in features:
-            if command == feature.command:
-                params = vclr.get_Args(commands, feature, records, message)
-                response = feature.view_Function(*params)
-                await message.channel.send(response)
-
-                #  Update Records
-                if records.updated:
-                    await pclr.save_Records(records.records, server)
-                
-                # If user has requested to fetch a message
-                id = records.requested_message_ID if records.requested_message_ID else None
-                return id
-
-        await message.channel.send(f"Sorry, I dont understand this command :/")
+    #  Special feature cases
+    if command == "HELP":  #  Case: Requires all feature list
+        response = help(features)
+        await message.channel.send(response)
         return
+
+    #  Identify feature to execute
+    for feature in features:
+        if command == feature.command:
+            params = vclr.get_Args(commands, feature, records, message)
+            response = feature.view_Function(*params)
+            await message.channel.send(response)
+
+            #  Update Records
+            if records.updated:
+                await pclr.save_Records(records.records, server)
+            
+            # If user has requested to fetch a message
+            id = records.requested_message_ID if records.requested_message_ID else None
+            return id
+
+    await message.channel.send(f"Sorry, I dont understand this command :/")
+    return
 
 
 def greet(message):
