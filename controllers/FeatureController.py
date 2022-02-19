@@ -126,11 +126,8 @@ def add_Event(topic, name, date, records):
 
 def get_Event(records, topic, name):
     delete_Expired_Events(records)
-    event = records.get(table="EVENTS", topic=topic)
-    if not event:
-        return None
-    text = f"**Event on topic {topic}:\n-> {name}** `{event[name]}`"
-    return text
+    event = records.get(table="EVENTS", topic=topic, name=name)
+    return event
 
 
 def get_Events(records):

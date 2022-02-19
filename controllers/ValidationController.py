@@ -50,10 +50,18 @@ def get_Args(commands, feature, records, message):
 def get_Days_Left(event_Date):
     date_Today = date.today()
     date_Today = date_Today.strftime("%d/%m/%Y")
-    date_Today = date_Today.split("/")
-    date_Today = list(map(int, date_Today))
-    date_Today = date(date_Today[2], date_Today[1], date_Today[0])
-    event_Date = event_Date.split("/")
-    event_Date = list(map(int, event_Date))
-    event_Date = date(event_Date[2], event_Date[1], event_Date[0])
+    date_Today = to_Date(date_Today)
+
+    event_Date = to_Date(event_Date)
+
     return (event_Date-date_Today).days
+
+
+def to_Date(date):
+    try:
+        date = date.split("/")
+        date = list(map(int, date))
+        date = date(date[2], date[1], date[0])
+        return date
+    except:
+        return False

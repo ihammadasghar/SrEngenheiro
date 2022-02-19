@@ -68,6 +68,8 @@ class Records:
         try:
             if name:
                 self.records[table][topic].pop(name)
+                if self.records[table][topic] == {}:
+                    self.records[table].pop(topic)
             elif topic:
                 self.records[table].pop(topic)
             else:

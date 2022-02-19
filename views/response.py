@@ -1,7 +1,7 @@
 from controllers import FeatureController as fclr
 from controllers import ValidationController as vclr
 from controllers import PersistenceController as pclr
-
+from settings import ALLOWED_NOTE_CHARACTERS
 
 async def main(message, features, server):
     #  Getting server records
@@ -97,6 +97,18 @@ def forget_Message(args, records):
 
 
 def notes(args, records):
+    #  Topic names
+    if len(args) == 0:
+        topic_names = fclr.get_Notes(records)
+        if topic_names is None:
+            return "There are no added notes."
+
+        response = f"**Note topics:**\n"
+        for name in topic_names:
+            response += f"-> {name}\n"
+        
+        return response
+
     action =  args[0].upper()
     if action == "ADD":
         #  Argument Validations
@@ -113,7 +125,10 @@ def notes(args, records):
             for entry in entries:
                 name = entry[0].upper()
                 names += name + ", "
-                added = fclr.add_Note(records=records, topic=topic, name=name, item=entry[1])
+                item = entry[1]
+                if not len(item)<=ALLOWED_NOTE_CHARACTERS and len(item)>0:
+                    return f"Note {name} should be less than 240 characters"
+                added = fclr.add_Note(records=records, topic=topic, name=name, item=item)
 
             if added:
                 return f"Noted **{names}** in topic **{topic}**."
@@ -123,6 +138,9 @@ def notes(args, records):
         #  Single note entry
         name = args[2].upper()
         item = args[3].upper()
+        if not len(item)<=ALLOWED_NOTE_CHARACTERS and len(item)>0:
+            return "Notes should be less than 240 characters"
+
         added = fclr.add_Note(records=records, topic=topic, name=name, item=item)
 
         if added:
@@ -158,18 +176,6 @@ def notes(args, records):
         #  Argument Validations
         if len(args) != 3 and len(args) != 2 and len(args) != 1:
             response = "I don't understand :/\n Correct command to get note:\n`sr! notes get [topic] [name(optional)]`"
-            return response
-
-        #  Topic names
-        if len(args) == 1:
-            topic_names = fclr.get_Notes(records)
-            if topic_names is None:
-                return "There are no added notes."
-
-            response = f"**Note topics:**\n"
-            for name in topic_names:
-                response += f"-> {name}\n"
-            
             return response
 
         #  Single Note
@@ -235,7 +241,7 @@ def events(args, records):
 
         response = "**Upcoming events:**\n"
         for event in all_events:
-            response += f"-> **({event['Topic']})** {event['Name']} - `{event['Date']}`\n"
+            response += f"-> `{event['Date']}` - **({event['Topic']})** {event['Name']}\n"
         return response
 
     # CRUD Actions
@@ -246,8 +252,8 @@ def events(args, records):
             response = "I don't understand :/\nCorrect command to add event:\n`sr! events add [topic] [name] [date]`"
             return response
 
+        # Multiple events
         topic = args[1].upper()
-        
         if type(args[2]) == list:
             entries = args[2]
             names = ""
@@ -255,23 +261,32 @@ def events(args, records):
             for entry in entries:
                 name = entry[0].upper()
                 date = entry[1]
+                if vclr.to_Date(date) == False:
+                    return f"On event {name} date format should be Day/Month/Year"
+
                 if vclr.get_Days_Left(date) < 0:
                     return f"Event **{name}** date `{date}` has already passed.\nIf you still want me to remember it, add a note."
 
                 names += name + ", "
                 added = fclr.add_Event(records=records, topic=topic, name=name, date=entry[1])
+
             if added:
                 response = f"Events **{names}** added in topic **{topic}**."
                 return response
+
             response = f"One or more of events **{names}** already exists in topic **{topic}**."
             return response
 
+        #  Single event
         name = args[2].upper()
         date = args[3].upper()
+        if vclr.to_Date(date) == False:
+            return "Date format should be Day/Month/Year"
+
         if vclr.get_Days_Left(date) < 0:
             return f"Event **{name}** date `{date}` has already passed.\nIf you still want me to remember it, add a note."
-        added = fclr.add_Event(records=records, topic=topic, name=name, date=date)
 
+        added = fclr.add_Event(records=records, topic=topic, name=name, date=date)
         if added:
             response = f"Event **{name}** added in topic **{topic}**."
             return response
@@ -310,39 +325,39 @@ def events(args, records):
             response = "I don't understand :/\n Correct command to get event:\n`sr! events get [topic] [name(Optional)]`"
             return response
 
-        #  Get note topic names
-        #  Argument Validations
-        if len(args) == 1:
-            topic_names = fclr.get_Events(records)
-            if topic_names is None:
-                return "There are no added events."
-
-            response = f"**Event topics:**\n"
-            for name in topic_names:
-                response += f"-> {name}\n"
-            
-            return response
-
+        # Get specific event
         topic = args[1].upper()
-        #  Argument Validations
         if len(args) == 3:
             name = args[2].upper()
             event = fclr.get_Event(topic=topic, name=name, records=records)
             if not event:
                 return f"Couldn't find event **{name}**."
-            return event
+
+            text = f"**Event on topic {topic}:\n-> {name}** `{event}`"
+            return text
 
         topic_Events = fclr.get_Events_Topic(topic=topic, records=records)
         if not topic_Events:
             return f"Couldn't find events on topic **{topic}**."
         return topic_Events
 
-
     elif action == "URGENT":
         response = fclr.urgent_Events(records)
         if not response:
             response = "Nothing urgent, no events in the next 7 days."
-        return response 
+        return response
+
+    elif action == "TOPICS":
+        #  Get event topic names
+        topic_names = fclr.get_Events(records)
+        if topic_names is None:
+            return "There are no added events."
+
+        response = f"**Event topics:**\n"
+        for name in topic_names:
+            response += f"-> {name}\n"
+        
+        return response
     
 
     elif action == "EDIT":
