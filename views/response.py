@@ -1,8 +1,12 @@
 from controllers import FeatureController as fclr
 from controllers import ValidationController as vclr
+from controllers import PersistenceController as pclr
 
 
-async def main(message, features, records):
+async def main(message, features, server):
+    #  Getting server records
+    records = await pclr.load_Records(server)
+    
     if message.content.startswith("sr!"):
         commands = vclr.get_Commands(message.content)
         command = commands[1].upper()
@@ -18,7 +22,14 @@ async def main(message, features, records):
                 params = vclr.get_Args(commands, feature, records, message)
                 response = feature.view_Function(*params)
                 await message.channel.send(response)
-                return
+
+                #  Update Records
+                if records.updated:
+                    await pclr.save_Records(records.records, server)
+                
+                # If user has requested to fetch a message
+                id = records.requested_message_ID if records.requested_message_ID else None
+                return id
 
         await message.channel.send(f"Sorry, I dont understand this command :/")
         return
