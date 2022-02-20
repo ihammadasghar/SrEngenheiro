@@ -9,11 +9,8 @@ def get_Date_Today():
 
 
 def get_Commands_Description(features):
-    text = "**COMMANDS**\n"
-    for feature in features:
-        text += feature.description + "\n"
-    
-    return text
+    description = [feature.description for feature in features]
+    return description
 
 #  Remembered messages
 def add_Message(name,  message_ID, records):
@@ -46,11 +43,8 @@ def add_Note(topic, name, item, records):
 
 
 def get_Note(records, topic, name):
-    note = records.get(table="NOTES", topic=topic)
-    if not note:
-        return None
-    text = f"**Note on topic {topic}:\n-> {name}** ```{note[name]}```"
-    return text
+    note = records.get(table="NOTES", topic=topic, name=name)
+    return note
 
 
 def get_Notes(records):

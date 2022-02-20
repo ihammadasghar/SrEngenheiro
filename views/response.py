@@ -52,7 +52,15 @@ def praise():
 def scold():
     return "ಥ_ಥ"
 
-#  Remembering messages features
+
+def help(features):
+    descriptions = fclr.get_Commands_Description(features)
+    response = "**Commands**\n"
+    for description in descriptions:
+        response += description + "\n"
+    return response
+
+
 def remember_Message(args, records, message):
     #  Argument Validations
     if len(args) != 1 or type(args[0]) == list:
@@ -70,7 +78,39 @@ def remember_Message(args, records, message):
     return f"A message with the name **{name}** already exists"
 
 
-def get_Message(args, records):
+def get(args, records):
+    action =  args[0].lower()
+    if action in ["note", "event"]:
+        #  Argument Validations
+        if len(args) != 3 and len(args) != 2 and len(args) != 1:
+            response = f"I don't understand :/\n Correct command to get {action}:\n`sr!get {action} [topic] [name(optional)]`"
+            return response
+
+        #  Single item
+        topic = args[1].upper()
+        if len(args) == 3:
+            name = args[2].upper()
+            if action == "note":
+                item = fclr.get_Note(topic=topic, name=name, records=records)
+            else:
+                item = fclr.get_Event(topic=topic, name=name, records=records)
+
+            if not item:
+                return f"Couldn't find {action} **{topic} {item}**."
+            text = f"**{action} on topic {topic}:\n-> {name}** `{item}`"
+            return text
+
+        #  Topic
+        if action == "note":
+            topic = fclr.get_Notes_Topic(topic=topic, records=records)
+        else:
+            topic = fclr.get_Events_Topic(topic=topic, records=records)
+
+        if not topic:
+            return f"Couldn't find {action}s on topic **{topic}**."
+        return topic
+
+    #  Get messages
     #  Argument Validation
     if len(args) != 1 or type(args[0]) == list:
         return "I don't understand :/\nCorrect command to get remembered message:\n`sr! get [name]`"
@@ -83,7 +123,38 @@ def get_Message(args, records):
     return f"I don't remember the message **{name}**"
 
 
-def forget_Message(args, records):
+def forget(args, records):
+    action = args[0].lower()
+    if action in  ["note", "event"]:
+        # Argument Validations
+        if not len(args) in [3, 2]:
+            return f"I don't understand :/\nCorrect command to forget {action}:\n`sr! forget {action} [topic] [name(optional)]`"
+
+        topic = args[1].upper()
+        if len(args) == 3:
+            name = args[2].upper()
+            if action == "note":
+                deleted = fclr.delete_Note(topic=topic, name=name, records=records)
+            else:
+                deleted = fclr.delete_Event(topic=topic, name=name, records=records)
+
+            if deleted:
+                return f"{action} **{name}** deleted from topic **{topic}**."
+
+            return f"Couldn't find {action} **{topic} {name}**."
+
+        if action == "note":
+            deleted = fclr.delete_Notes_Topic(topic=topic, records=records)
+        else:
+            deleted = fclr.delete_Events_Topic(topic=topic, records=records)
+
+        if deleted:
+                response = f"{action} topic **{topic}** deleted."
+                return response
+        response = f"Couldn't find {action} topic **{topic}**."
+        return response
+
+    #  Forget Messages
     #  Argument Validation
     if len(args) != 1:
         return "I don't understand :/\nCorrect command to forget:\n`sr! forget [name]`"
@@ -94,6 +165,134 @@ def forget_Message(args, records):
         return f"**{name}** forgotten."
 
     return f"Couldn't find a message named **{name}**"
+
+
+def add(args, records):
+    action = args[0]
+    action_caps = action.upper()
+    if action_caps in ["NOTE", "EVENT"]:
+        #  Argument Validations
+        if not len(args) in [4, 3]:
+            return f"I don't understand :/\nCorrect command to add {action}:\n`sr! {action} add [topic] [{action}_name] [item]`"
+
+        topic = args[1].upper()
+        #  Multiple entries
+        if type(args[2]) == list:
+            entries = args[2]
+            names = []
+            added = True
+            for entry in entries:
+                name = entry[0].upper()
+                names.append(name)
+                if action_caps == "NOTE":
+                    names += name + ", "
+                    item = entry[1]
+                    #  Validations
+                    if not len(item)<=ALLOWED_NOTE_CHARACTERS and len(item)>0:
+                        return f"Note {name} should be less than 240 characters"
+                    added = fclr.add_Note(records=records, topic=topic, name=name, item=item)
+                else:
+                    date = entry[1]
+                    #  Validations
+                    if not vclr.is_Correct_Date_Format(date):
+                        return f"On event {name} date format should be Day/Month/Year"
+
+                    if vclr.get_Days_Left(date) < 0:
+                        return f"Event **{name}** date `{date}` has already passed.\nIf you still want me to remember it, add a note."
+                    added = fclr.add_Event(records=records, topic=topic, name=name, date=date)
+
+            if added:
+                return f"{action} **{names}** added in topic **{topic}**."
+
+            return f"One or more of {action}s **{names}** already exists in topic **{topic}**."
+
+        #  Single entry
+        name = args[2].upper()
+        item = args[3].upper()
+
+        if action_caps == "NOTE":
+            #  Validations
+            if not len(item)<=ALLOWED_NOTE_CHARACTERS and len(item)>0:
+                return "Notes should be less than 240 characters"
+
+            added = fclr.add_Note(records=records, topic=topic, name=name, item=item)
+        else:
+            #  Validations
+            if not vclr.is_Correct_Date_Format(item):
+                return "Date format should be Day/Month/Year"
+
+            if vclr.get_Days_Left(item) < 0:
+                return f"Event **{name}** date `{item}` has already passed.\nIf you still want me to remember it, add a note."
+            
+            added = fclr.add_Event(records=records, topic=topic, name=name, date=item)
+
+        if added:
+            return f"{action} **{name}** added in topic **{topic}**."
+        return f"A {action} with the name **{name}** already exists in topic **{topic}**."
+
+
+def edit(args, records):
+    action = args[0]
+    action_caps = action.upper()
+    if action_caps in ["NOTE", "EVENT"]:
+        #  Argument Validations
+        if not len(args) in [4, 3]:
+            return f"I don't understand :/\nCorrect command to edit {action}:\n`sr! edit {action} [topic] [{action}_name] [item]`"
+
+        topic = args[1].upper()
+        #  Multiple entries
+        if type(args[2]) == list:
+            entries = args[2]
+            names = []
+            edited = True
+            for entry in entries:
+                name = entry[0].upper()
+                names.append(name)
+                if action_caps == "NOTE":
+                    names += name + ", "
+                    item = entry[1]
+                    #  Validations
+                    if not len(item)<=ALLOWED_NOTE_CHARACTERS and len(item)>0:
+                        return f"Note {name} should be less than 240 characters"
+                    edited = fclr.edit_Note(records=records, topic=topic, name=name, item=item)
+                else:
+                    date = entry[1]
+                    #  Validations
+                    if not vclr.is_Correct_Date_Format(date):
+                        return f"On event {name} date format should be Day/Month/Year"
+
+                    if vclr.get_Days_Left(date) < 0:
+                        return f"Event **{name}** date `{date}` has already passed.\nIf you still want me to remember it, edit a note."
+                    edited = fclr.edit_Event(records=records, topic=topic, name=name, date=date)
+
+            if edited:
+                return f"{action} **{names}** edited in topic **{topic}**."
+
+            return f"One or more of {action}s **{names}** don't exist in topic **{topic}**."
+
+        #  Single entry
+        name = args[2].upper()
+        item = args[3].upper()
+
+        if action_caps == "NOTE":
+            #  Validations
+            if not len(item)<=ALLOWED_NOTE_CHARACTERS and len(item)>0:
+                return "Notes should be less than 240 characters"
+
+            edited = fclr.edit_Note(records=records, topic=topic, name=name, item=item)
+        else:
+            #  Validations
+            if not vclr.is_Correct_Date_Format(item):
+                return "Date format should be Day/Month/Year"
+
+            if vclr.get_Days_Left(item) < 0:
+                return f"Event **{name}** date `{item}` has already passed.\nIf you still want me to remember it, add a note."
+            
+            edited = fclr.edit_Event(records=records, topic=topic, name=name, date=item)
+
+        if edited:
+            return f"{action} **{name}** edited in topic **{topic}**."
+        return f"A {action} with the name **{name}** doesn't exist in topic **{topic}**."
 
 
 def notes(args, records):
@@ -109,127 +308,6 @@ def notes(args, records):
         
         return response
 
-    action =  args[0].upper()
-    if action == "ADD":
-        #  Argument Validations
-        if len(args) != 4 and len(args) != 3:
-            return "I don't understand :/\nCorrect command to add note:\n`sr! notes add [topic] [name] [content]`"
-
-        topic = args[1].upper()
-        
-        #  Multiple note entries
-        if type(args[2]) == list:
-            entries = args[2]
-            names = ""
-            added = True
-            for entry in entries:
-                name = entry[0].upper()
-                names += name + ", "
-                item = entry[1]
-                if not len(item)<=ALLOWED_NOTE_CHARACTERS and len(item)>0:
-                    return f"Note {name} should be less than 240 characters"
-                added = fclr.add_Note(records=records, topic=topic, name=name, item=item)
-
-            if added:
-                return f"Noted **{names}** in topic **{topic}**."
-
-            return f"One or more of notes **{names}** already exists in topic **{topic}**."
-
-        #  Single note entry
-        name = args[2].upper()
-        item = args[3].upper()
-        if not len(item)<=ALLOWED_NOTE_CHARACTERS and len(item)>0:
-            return "Notes should be less than 240 characters"
-
-        added = fclr.add_Note(records=records, topic=topic, name=name, item=item)
-
-        if added:
-            return f"Noted **{name}** in topic **{topic}**."
-
-        return f"A note with the name **{name}** already exists in topic **{topic}**."
-
-
-    elif action == "DELETE":
-        # Argument Validations
-        if len(args) != 3 and len(args) != 2:
-            response = "I don't understand :/\nCorrect command to delete note:\n`sr! notes delete [topic] [name(optional)]`"
-            return response
-
-        topic = args[1].upper()
-        if len(args) == 3:
-            name = args[2].upper()
-            deleted = fclr.delete_Note(topic=topic, name=name, records=records)
-            if deleted:
-                return f"Note **{name}** deleted from topic **{topic}**."
-
-            return f"Couldn't find note **{name}**."
-
-        deleted = fclr.delete_Notes_Topic(topic=topic, records=records)
-        if deleted:
-                response = f"Notes topic **{topic}** deleted."
-                return response
-        response = f"Couldn't find notes topic **{topic}**."
-        return response
-
-
-    elif action == "GET":
-        #  Argument Validations
-        if len(args) != 3 and len(args) != 2 and len(args) != 1:
-            response = "I don't understand :/\n Correct command to get note:\n`sr! notes get [topic] [name(optional)]`"
-            return response
-
-        #  Single Note
-        topic = args[1].upper()
-        if len(args) == 3:
-            name = args[2].upper()
-            note = fclr.get_Note(topic=topic, name=name, records=records)
-            if not note:
-                return f"Couldn't find note **{name}**."
-            return note
-
-        # Note topic
-        topic_Notes = fclr.get_Notes_Topic(topic=topic, records=records)
-        if not topic_Notes:
-            return f"Couldn't find notes on topic **{topic}**."
-        return topic_Notes
-
-
-    elif action == "EDIT":
-        #  Argument Validations
-        if len(args) != 4 and len(args) != 3:
-            response = "I don't understand :/\n Correct command to edit note:\n`sr! notes edit [topic] [name] [content]`"
-            return response
-
-        topic = args[1].upper()
-        
-        if type(args[2]) == list:
-            entries = args[2]
-            names = ""
-            edited = True
-            for entry in entries:
-                name = entry[0].upper()
-                names += name + ", "
-                edited = fclr.edit_Note(records=records, topic=topic, name=name, item=entry[1])
-            if edited:
-                response = f"Noted **{names}** edited in topic **{topic}**."
-                return response
-            response = f"One or more of notes **{names}** dont exist in topic **{topic}**."
-            return response
-
-        name = args[2].upper()
-        item = args[3].upper()
-        edited = fclr.edit_Note(records=records, topic=topic, name=name, item=item)
-
-        if edited:
-            response = f"Note **{name}** edited in topic **{topic}**."
-            return response
-        response = f"Note **{name}** doesn't exist in topic **{topic}**."
-        return response
-
-
-    else:
-        return f"I don't know how to perform the action **{action}**."
-
 
 def events(args, records):
     # Listing Ordered Events
@@ -244,104 +322,8 @@ def events(args, records):
             response += f"-> `{event['Date']}` - **({event['Topic']})** {event['Name']}\n"
         return response
 
-    # CRUD Actions
     action =  args[0].upper()
-    if action == "ADD":
-        #  Argument Validations
-        if len(args) != 4 and len(args) != 3:
-            response = "I don't understand :/\nCorrect command to add event:\n`sr! events add [topic] [name] [date]`"
-            return response
-
-        # Multiple events
-        topic = args[1].upper()
-        if type(args[2]) == list:
-            entries = args[2]
-            names = ""
-            added = True
-            for entry in entries:
-                name = entry[0].upper()
-                date = entry[1]
-                if vclr.to_Date(date) == False:
-                    return f"On event {name} date format should be Day/Month/Year"
-
-                if vclr.get_Days_Left(date) < 0:
-                    return f"Event **{name}** date `{date}` has already passed.\nIf you still want me to remember it, add a note."
-
-                names += name + ", "
-                added = fclr.add_Event(records=records, topic=topic, name=name, date=entry[1])
-
-            if added:
-                response = f"Events **{names}** added in topic **{topic}**."
-                return response
-
-            response = f"One or more of events **{names}** already exists in topic **{topic}**."
-            return response
-
-        #  Single event
-        name = args[2].upper()
-        date = args[3].upper()
-        if vclr.to_Date(date) == False:
-            return "Date format should be Day/Month/Year"
-
-        if vclr.get_Days_Left(date) < 0:
-            return f"Event **{name}** date `{date}` has already passed.\nIf you still want me to remember it, add a note."
-
-        added = fclr.add_Event(records=records, topic=topic, name=name, date=date)
-        if added:
-            response = f"Event **{name}** added in topic **{topic}**."
-            return response
-        response = f"Event **{name}** already exists in topic **{topic}**."
-        return response
-
-
-    elif action == "DELETE":
-        #  Argument Validations
-        if len(args) != 3 and len(args) != 2:
-            response = "I don't understand :/\n Correct command to delete event:\n`sr! events delete [topic] [name(Optional)]`"
-            return response
-
-        topic = args[1].upper()
-        #  Argument Validations
-        if len(args) == 3:
-            name = args[2].upper()
-            deleted = fclr.delete_Event(topic=topic, name=name, records=records)
-            if deleted:
-                response = f"Event **{name}** deleted from topic **{topic}**."
-                return response
-
-            response = f"Couldn't find event **{name}**."
-            return response
-
-        deleted = fclr.delete_Events_Topic(topic=topic, records=records)
-        if deleted:
-                response = f"Events topic **{topic}** deleted."
-                return response
-        response = f"Couldn't find events topic **{topic}**."
-        return response
-    
-    elif action == "GET":
-        #  Argument Validations
-        if len(args) != 3 and len(args) != 2 and len(args) != 1:
-            response = "I don't understand :/\n Correct command to get event:\n`sr! events get [topic] [name(Optional)]`"
-            return response
-
-        # Get specific event
-        topic = args[1].upper()
-        if len(args) == 3:
-            name = args[2].upper()
-            event = fclr.get_Event(topic=topic, name=name, records=records)
-            if not event:
-                return f"Couldn't find event **{name}**."
-
-            text = f"**Event on topic {topic}:\n-> {name}** `{event}`"
-            return text
-
-        topic_Events = fclr.get_Events_Topic(topic=topic, records=records)
-        if not topic_Events:
-            return f"Couldn't find events on topic **{topic}**."
-        return topic_Events
-
-    elif action == "URGENT":
+    if action == "URGENT":
         response = fclr.urgent_Events(records)
         if not response:
             response = "Nothing urgent, no events in the next 7 days."
@@ -358,44 +340,6 @@ def events(args, records):
             response += f"-> {name}\n"
         
         return response
-    
-
-    elif action == "EDIT":
-        #  Argument Validations
-        if len(args) != 4 and len(args) != 3:
-            response = "I don't understand :/\n Correct command to edit events:\n`sr! events edit [topic] [name] [date]`"
-            return response
-
-        topic = args[1].upper()
-        
-        if type(args[2]) == list:
-            entries = args[2]
-            names = ""
-            edited = True
-            for entry in entries:
-                name = entry[0].upper()
-                names += name + ", "
-                edited = fclr.add_Edit(records=records, topic=topic, name=name, date=entry[1])
-            if edited:
-                response = f"Events **{names}** edited in topic **{topic}**."
-                return response
-            response = f"One or more of events **{names}** don't exist in topic **{topic}**."
-            return response
-
-        name = args[2].upper()
-        date = args[3].upper()
-        edited = fclr.edit_Event(records=records, topic=topic, name=name, date=date)
-
-        if edited:
-            response = f"Event **{name}** edited in topic **{topic}**."
-            return response
-        response = f"Event **{name}** doesn't exist in topic **{topic}**."
-        return response
 
     else:
         return f"I don't know how to perform the action **{action}**."
-
-
-def help(features):
-    response = fclr.get_Commands_Description(features)
-    return response
