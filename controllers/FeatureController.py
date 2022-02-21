@@ -49,16 +49,19 @@ def get_Note(records, topic, tag):
 
 def get_Topic_Names(table, records):
     notes_table = records.get(table=table)
-    note_topic_tags = notes_table.keys()
-    if note_topic_tags:
-        return note_topic_tags
+    if notes_table:
+        note_topic_tags = notes_table.keys()
+        if note_topic_tags:
+            return note_topic_tags
     return None
 
 
 def get_Topic_Tag_Names(table, topic, records):
     topic = records.get(table=table, topic=topic)
-    names = topic.keys()
-    return names
+    if topic:
+        names = topic.keys()
+        return names
+    return None
 
 
 def get_Notes_Topic(records, topic):
