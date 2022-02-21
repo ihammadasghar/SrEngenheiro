@@ -113,6 +113,7 @@ def get(args, records):
 
             if not content:
                 return f"I couldn't find {action} **{topic} {tag}**."
+
             text = f"**{action} on topic {topic}:\n-> {tag}** `{content}`"
             return text
 
@@ -196,7 +197,7 @@ def add(args, records):
         #  Argument Validations
         if not len(args) in [4, 3, 2]:
             return f"Sorry senhor, I dont understand\nCorrect command to add {action}:\n`!{action} add [topic] [{action}_tag] [content]`"
-        
+
         #  Multiple entries
         mult_entries = False
         

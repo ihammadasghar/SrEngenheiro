@@ -64,6 +64,12 @@ def get_Topic_Tag_Names(table, topic, records):
     return None
 
 
+def get_Topic_Tag_Names(table, topic, records):
+    topic = records.get(table=table, topic=topic)
+    names = topic.keys()
+    return names
+
+
 def get_Notes_Topic(records, topic):
     notes = records.get(table="NOTES", topic=topic)
     if not notes:
