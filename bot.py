@@ -17,7 +17,7 @@ if __name__ == "__main__":
         if message.author == bot.user:
             return
 
-        if message.content.startswith(ACTIVATION_WORD):
+        if message.content.startswith(ACTIVATION_SYMBOL):
             data_Channel = bot.get_channel(id=DATA_CHANNEL_ID)
             data_files = await data_Channel.history(limit=MAX_RECORD_FILES).flatten()
 

@@ -8,7 +8,7 @@ async def main(message, features, server):
     records = await pclr.load_Records(server)
     
     commands = vclr.get_Commands(message.content)
-    command = commands[1].upper()
+    command = commands[0].upper()
 
     #  Special feature cases
     if command == "HELP":  #  Case: Requires all feature list
@@ -139,7 +139,7 @@ def forget(args, records):
                 deleted = fclr.delete_Event(topic=topic, tag=tag, records=records)
 
             if deleted:
-                return f"{action} **{tag}** deleted from topic **{topic}**."
+                return f"{action} **{tag}** forgotten from topic **{topic}**."
 
             return f"Couldn't find {action} **{topic} {tag}**."
 
@@ -149,7 +149,7 @@ def forget(args, records):
             deleted = fclr.delete_Events_Topic(topic=topic, records=records)
 
         if deleted:
-                response = f"{action} topic **{topic}** deleted."
+                response = f"{action} topic **{topic}** forgotten."
                 return response
         response = f"Couldn't find {action} topic **{topic}**."
         return response
@@ -184,7 +184,6 @@ def add(args, records):
                 tag = entry[0].upper()
                 tags.append(tag)
                 if action == "note":
-                    tags += tag + ", "
                     content = entry[1]
                     #  Validations
                     if not len(content)<=ALLOWED_NOTE_CHARACTERS and len(content)>0:
@@ -201,7 +200,7 @@ def add(args, records):
                     added = fclr.add_Event(records=records, topic=topic, tag=tag, date=date)
 
             if added:
-                return f"{action} **{tags}** added in topic **{topic}**."
+                return f"{action}s **{tags}** added in topic **{topic}**."
 
             return f"One or more of {action}s **{tags}** already exists in topic **{topic}**."
 

@@ -2,40 +2,46 @@ from datetime import date
 
 
 def get_Commands(command):
-    parts = command.split("\n")
-    commands =  parts[0].split('"')
-    if len(commands) == 3:
-        quotes_text = commands[1]
-        commands = commands[0].split(" ")
-        commands.pop()
-        commands.append(quotes_text)
-    else:
-        commands = commands[0].split(" ")
-
-    if len(commands) < 2:
-        return ["sr!", "hi"]
+    entries = command.split("\n")
+    command = entries.pop(0)[1:]
     
-    if len(parts) > 1:
+    #  Multiple entry commands
+    if len(entries) > 1:
         items = []
-        for item in parts[1:]:
-            item = item.split('"')
-            if len(item) == 3:
-                quotes_text = item[1]
-                item = item[0].split(" ")
-                item.pop()
-                item.append(quotes_text)
+        for item in entries:
+            if item.endswith('"'):
+                item = split_quotes(item)
             else:
                 item = item[0].split(" ")
             items.append(item)
-        commands.append(items)
+        command = command.split(" ")
+        command.append(items)
 
-    return commands
+    else:
+        #  If there is quote text
+        if command.endswith('"'):
+            command = split_quotes(command)
+        else:
+            command = command.split(" ")
+
+        if command == []:
+            return ["hi"]
+
+    return command
+
+
+def split_quotes(command):
+    command = command.split('"')
+    quote_text = command[1]
+    command = command[0].split(" ")[:-1]
+    command.append(quote_text)
+    return command
 
 
 def get_Args(commands, feature, records, message):
     params = []
     if feature.args_required:
-        arguments = [commands[i+2] for i in range(len(commands)-2)]
+        arguments = [commands[i+1] for i in range(len(commands)-1)]
         params.append(arguments)
 
     if feature.records_Required:

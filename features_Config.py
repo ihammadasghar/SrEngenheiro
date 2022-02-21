@@ -1,27 +1,27 @@
 from models.Feature import Feature
 from views.response import *
-from settings import ACTIVATION_SYMBOL, ACTIVATION_WORD
+from settings import ACTIVATION_SYMBOL
 
 #  Intialize your feature here
 greeting_feature =  Feature(command="HI", 
                             view_Function=greet, 
-                            description=f"**-> Hi**: `{ACTIVATION_WORD} hi`",
+                            description=f"**-> Hi**: `{ACTIVATION_SYMBOL} hi`",
                             message_Required=True
                             )
 
 current_day_feature = Feature(command="TODAY",
                               view_Function=today,
-                              description=f"**-> Date today**: `{ACTIVATION_WORD} today`"
+                              description=f"**-> Date today**: `{ACTIVATION_SYMBOL} today`"
                               )               
 
 praise_feature = Feature(command="GOOD-BOT",
                         view_Function=praise,
-                        description=f"**-> Praise**: `{ACTIVATION_WORD} Good-Bot`"
+                        description=f"**-> Praise**: `{ACTIVATION_SYMBOL} Good-Bot`"
                         )
 
 scold_feature = Feature(command="BAD-BOT",
                         view_Function=scold,
-                        description=f"**-> Scold**: `{ACTIVATION_WORD} Bad-Bot`"
+                        description=f"**-> Scold**: `{ACTIVATION_SYMBOL} Bad-Bot`"
                         )
 
     
@@ -84,9 +84,9 @@ get_feature = Feature(command="GET",
                       description=get_description
                       )
 
-events_description =f"""**-> Events:** `{ACTIVATION_WORD} events`
-**->  Urgent Events:** `{ACTIVATION_WORD} events urgent`
-**->  Event Topics:** `{ACTIVATION_WORD} events topics`"""
+events_description =f"""**-> Events:** `{ACTIVATION_SYMBOL} events`
+**->  Urgent Events:** `{ACTIVATION_SYMBOL} events urgent`
+**->  Event Topics:** `{ACTIVATION_SYMBOL} events topics`"""
 events_feature = Feature(command="EVENTS", 
                         args_required=True, 
                         view_Function=events, 
@@ -98,7 +98,7 @@ notes_feature = Feature(command="NOTES",
                         args_required=True, 
                         view_Function=notes,
                         records_Required=True, 
-                        description=f"**-> Note topics:** `{ACTIVATION_WORD} notes`"
+                        description=f"**-> Note topics:** `{ACTIVATION_SYMBOL} notes`"
                         )
 
 
