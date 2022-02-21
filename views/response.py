@@ -70,11 +70,9 @@ def messages(args, records):
             return "There are no messages in my memory senhor"
 
         response = f"**Messages**\n"
-        for name in topic_names:
-            response += f"**-> {name}**:\n"
-            tag_names = fclr.get_Topic_Tag_Names("MESSAGES", name, records)
-            for tag in tag_names:
-                response += f" - {tag}\n"
+        tag_names = fclr.get_Topic_Tag_Names(table="MESSAGES", topic="REMEMBERED", records=records)
+        for tag in tag_names:
+            response += f"-> {tag}\n"
         
         return response
 
@@ -100,7 +98,7 @@ def get(args, records):
     action =  args[0].lower()
     if action in ["note", "event"]:
         #  Argument Validations
-        if len(args) != 3 and len(args) != 2 and len(args) != 1:
+        if not len(args) in [3, 2, 1]:
             response = f"Sorry senhor, I dont understand\n Correct command to get {action}:\n`!get {action} [topic] [tag(optional)]`"
             return response
 
@@ -114,19 +112,28 @@ def get(args, records):
                 content = fclr.get_Event(topic=topic, tag=tag, records=records)
 
             if not content:
-                return f"I couldn't find {action} **{topic} {content}**."
+                return f"I couldn't find {action} **{topic} {tag}**."
+
             text = f"**{action} on topic {topic}:\n-> {tag}** `{content}`"
             return text
 
         #  Topic
         if action == "note":
-            topic = fclr.get_Notes_Topic(topic=topic, records=records)
+            content = fclr.get_Notes_Topic(topic=topic, records=records)
+            if not content:
+                content = fclr.get_Note(topic="GENERAL", tag=topic, records=records)
+                if not content:
+                    return f"I couldn't find {action} **{topic}** in GENERAL notes, sorry senhor."
+                return f"**{action} on topic GENERAL:\n-> {topic}** `{content}`"
+            return content
         else:
-            topic = fclr.get_Events_Topic(topic=topic, records=records)
-
-        if not topic:
-            return f"I couldn't find {action}s on topic **{topic}**, sorry senhor."
-        return topic
+            content = fclr.get_Events_Topic(topic=topic, records=records)
+            if not content:
+                content = fclr.get_Event(topic="GENERAL", tag=topic, records=records)
+                if not content:
+                    return f"I couldn't find {action} **{topic}** in GENERAL events, sorry senhor."
+                return f"**{action} on topic GENERAL:\n-> {topic}** `{content}`"
+            return content
 
     #  Get messages
     #  Argument Validation
@@ -137,7 +144,6 @@ def get(args, records):
     found = fclr.get_Message(tag, records)
     if found:
         return f"Searching through memories for **{tag}**..."
-
     return f"I don't remember the message **{tag}**"
 
 
@@ -189,22 +195,30 @@ def add(args, records):
     action = args[0].lower()
     if action in ["note", "event"]:
         #  Argument Validations
-        if not len(args) in [4, 3]:
+        if not len(args) in [4, 3, 2]:
             return f"Sorry senhor, I dont understand\nCorrect command to add {action}:\n`!{action} add [topic] [{action}_tag] [content]`"
 
-        topic = args[1].upper()
         #  Multiple entries
-        if type(args[2]) == list:
+        mult_entries = False
+        
+        if len(args)==3 and type(args[2]) == list:
+            topic = args[1]
             entries = args[2]
+            mult_entries == True
+        elif type(args[1]) == list:
+            topic = "GENERAL"
+            entries = args[1]
+            mult_entries = True
+
+        if mult_entries:
             tags = []
-            added = True
             for entry in entries:
                 tag = entry[0].upper()
                 tags.append(tag)
                 if action == "note":
                     content = entry[1]
                     #  Validations
-                    if not len(content)<=ALLOWED_NOTE_CHARACTERS and len(content)>0:
+                    if not len(content) <= ALLOWED_NOTE_CHARACTERS and len(content)>0:
                         return f"Senhor! note {tag} should be less than 240 characters"
                     added = fclr.add_Note(records=records, topic=topic, tag=tag, content=content)
                 else:
@@ -216,29 +230,33 @@ def add(args, records):
                     if vclr.get_Days_Left(date) < 0:
                         return f"Senhor! event **{tag}** date `{date}` has already passed.\nIf you still want me to remember it, add a note."
                     added = fclr.add_Event(records=records, topic=topic, tag=tag, date=date)
-
-            if added:
-                return f"{action}s **{tags}** added in topic **{topic}** senhor!"
-
-            return f"Senhor! One or more of {action}s **{tags}** already exists in topic **{topic}**."
+                if not added:
+                    return f"Senhor! {action} **{tag}** already exists in topic **{topic}**."
+            return f"{action}s **{tags}** added in topic **{topic}** senhor!"
 
         #  Single entry
-        tag = args[2].upper()
-        content = args[3].upper()
+        if len(args) == 4:
+            topic = args[1].upper()
+            tag = args[2].upper()
+            content = args[3]
+        else:
+            topic = "GENERAL"
+            tag = args[1].upper()
+            content = args[2]
 
         if action == "note":
             #  Validations
             if not len(content)<=ALLOWED_NOTE_CHARACTERS and len(content)>0:
-                return "Notes should be less than 240 characters"
+                return "Senhor! notes should be less than 240 characters"
 
             added = fclr.add_Note(records=records, topic=topic, tag=tag, content=content)
         else:
             #  Validations
             if not vclr.is_Correct_Date_Format(content):
-                return "Date format should be Day/Month/Year"
+                return "Senhor! date format should be Day/Month/Year"
 
             if vclr.get_Days_Left(content) < 0:
-                return f"Event **{tag}** date `{content}` has already passed.\nIf you still want me to remember it, add a note."
+                return f"Senhor! event **{tag}** date `{content}` has already passed.\nIf you still want me to remember it, add a note."
             
             added = fclr.add_Event(records=records, topic=topic, tag=tag, date=content)
 
@@ -248,67 +266,79 @@ def add(args, records):
 
 
 def edit(args, records):
-    action = args[0]
-    action_caps = action.upper()
-    if action_caps in ["NOTE", "EVENT"]:
+    action = args[0].lower()
+    if action in ["note", "event"]:
         #  Argument Validations
-        if not len(args) in [4, 3]:
+        if not len(args) in [4, 3, 2]:
             return f"Sorry senhor, I dont understand\nCorrect command to edit {action}:\n`!edit {action} [topic] [{action}_tag] [content]`"
 
-        topic = args[1].upper()
         #  Multiple entries
-        if type(args[2]) == list:
+        mult_entries = False
+        
+        if len(args)==3 and type(args[2]) == list:
+            topic = args[1]
             entries = args[2]
+            mult_entries == True
+        elif type(args[1]) == list:
+            topic = "GENERAL"
+            entries = args[1]
+            mult_entries = True
+
+        if mult_entries:
             tags = []
-            edited = True
             for entry in entries:
                 tag = entry[0].upper()
                 tags.append(tag)
-                if action_caps == "NOTE":
+                if action == "note":
                     tags += tag + ", "
                     content = entry[1]
                     #  Validations
                     if not len(content)<=ALLOWED_NOTE_CHARACTERS and len(content)>0:
-                        return f"Note {tag} should be less than 240 characters"
+                        return f"Senhor! note {tag} should be less than 240 characters"
                     edited = fclr.edit_Note(records=records, topic=topic, tag=tag, content=content)
                 else:
                     date = entry[1]
                     #  Validations
                     if not vclr.is_Correct_Date_Format(date):
-                        return f"On event {tag} date format should be Day/Month/Year"
+                        return f"Senhor! on event {tag} date format should be Day/Month/Year"
 
                     if vclr.get_Days_Left(date) < 0:
-                        return f"Event **{tag}** date `{date}` has already passed.\nIf you still want me to remember it, edit a note."
+                        return f"Senhor! event **{tag}** date `{date}` has already passed.\nIf you still want me to remember it, edit a note."
                     edited = fclr.edit_Event(records=records, topic=topic, tag=tag, date=date)
+                if not edited:
+                    return f"Senhor! {action} **{tag}** doesn't exist in topic **{topic}**."
 
-            if edited:
-                return f"{action} **{tags}** edited in topic **{topic}**."
-
-            return f"One or more of {action}s **{tags}** don't exist in topic **{topic}**."
+                return f"{action} **{tags}** edited in topic **{topic}** senhor!"
 
         #  Single entry
-        tag = args[2].upper()
-        content = args[3].upper()
+        if len(args) == 4:
+            topic = args[1].upper()
+            tag = args[2].upper()
+            content = args[3]
+        else:
+            topic = "GENERAL"
+            tag = args[1].upper()
+            content = args[2]
 
-        if action_caps == "NOTE":
+        if action == "note":
             #  Validations
-            if not len(content)<=ALLOWED_NOTE_CHARACTERS and len(content)>0:
-                return "Notes should be less than 240 characters"
+            if not len(content) <= ALLOWED_NOTE_CHARACTERS and len(content)>0:
+                return "Senhor! notes should be less than 240 characters"
 
             edited = fclr.edit_Note(records=records, topic=topic, tag=tag, content=content)
         else:
             #  Validations
             if not vclr.is_Correct_Date_Format(content):
-                return "Date format should be Day/Month/Year"
+                return "Senhor! Date format should be Day/Month/Year"
 
             if vclr.get_Days_Left(content) < 0:
-                return f"Event **{tag}** date `{content}` has already passed.\nIf you still want me to remember it, add a note."
+                return f"Senhor! event **{tag}** date `{content}` has already passed.\nIf you still want me to remember it, add a note."
             
             edited = fclr.edit_Event(records=records, topic=topic, tag=tag, date=content)
 
         if edited:
-            return f"{action} **{tag}** edited in topic **{topic}**."
-        return f"A {action} with the tag **{tag}** doesn't exist in topic **{topic}**."
+            return f"{action} **{tag}** edited in topic **{topic}** senhor!."
+        return f"Senhor! {action} with the tag **{tag}** doesn't exist in topic **{topic}**."
 
 
 def notes(args, records):
