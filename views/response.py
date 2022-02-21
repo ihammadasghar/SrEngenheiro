@@ -31,13 +31,13 @@ async def main(message, features, server):
             id = records.requested_message_ID if records.requested_message_ID else None
             return id
 
-    await message.channel.send(f"Sorry, I dont understand this command :/")
+    await message.channel.send(f"Sorry senhor, I dont understand this command.")
     return
 
 
 def greet(message):
     tag = message.author.display_name
-    return f"Hi {tag}! `sr! help` to see how I can help"
+    return f"Hi Sr.{tag}! `!help` to see how I can help"
 
 
 def today():
@@ -57,25 +57,43 @@ def help(features):
     descriptions = fclr.get_Commands_Description(features)
     response = "**Commands**\n"
     for description in descriptions:
-        response += description + "\n"
+        if description:
+            response += description + "\n"
     return response
+
+
+def messages(args, records):
+    #  Topic tags
+    if len(args) == 0:
+        topic_names = fclr.get_Topic_Names(table="MESSAGES", records=records)
+        if topic_names is None:
+            return "There are no messages in my memory senhor"
+
+        response = f"**Messages**\n"
+        for name in topic_names:
+            response += f"**-> {name}**:\n"
+            tag_names = fclr.get_Topic_Tag_Names("MESSAGES", name, records)
+            for tag in tag_names:
+                response += f" - {tag}\n"
+        
+        return response
 
 
 def remember_Message(args, records, message):
     #  Argument Validations
     if len(args) != 1 or type(args[0]) == list:
-        return "I don't understand :/\nCorrect command to remember:\n`sr! remember [tag]`"
+        return "Senhor, I don't understand\nCorrect command to remember:\n`!remember [tag]`"
     
     if message.reference.message_id == None:
-        return "You need to reply this command to the message I need to remember."
+        return "Senhor, you need to reply this command to the message I need to remember."
 
 
     tag = args[0]
     added = fclr.add_Message(tag, message.reference.message_id, records)
     if added:
-        return f"I'll keep an eye on **{tag}**"
+        return f"I'll keep an eye on **{tag}** senhor!"
 
-    return f"A message with the tag **{tag}** already exists"
+    return f"Senhor, a message with the tag **{tag}** already exists"
 
 
 def get(args, records):
@@ -83,7 +101,7 @@ def get(args, records):
     if action in ["note", "event"]:
         #  Argument Validations
         if len(args) != 3 and len(args) != 2 and len(args) != 1:
-            response = f"I don't understand :/\n Correct command to get {action}:\n`sr!get {action} [topic] [tag(optional)]`"
+            response = f"Sorry senhor, I dont understand\n Correct command to get {action}:\n`!get {action} [topic] [tag(optional)]`"
             return response
 
         #  Single content
@@ -96,7 +114,7 @@ def get(args, records):
                 content = fclr.get_Event(topic=topic, tag=tag, records=records)
 
             if not content:
-                return f"Couldn't find {action} **{topic} {content}**."
+                return f"I couldn't find {action} **{topic} {content}**."
             text = f"**{action} on topic {topic}:\n-> {tag}** `{content}`"
             return text
 
@@ -107,13 +125,13 @@ def get(args, records):
             topic = fclr.get_Events_Topic(topic=topic, records=records)
 
         if not topic:
-            return f"Couldn't find {action}s on topic **{topic}**."
+            return f"I couldn't find {action}s on topic **{topic}**, sorry senhor."
         return topic
 
     #  Get messages
     #  Argument Validation
     if len(args) != 1 or type(args[0]) == list:
-        return "I don't understand :/\nCorrect command to get remembered message:\n`sr! get [tag]`"
+        return "Senhor, I don't understand\nCorrect command to get remembered message:\n`!get [tag]`"
     
     tag = args[0]
     found = fclr.get_Message(tag, records)
@@ -128,7 +146,7 @@ def forget(args, records):
     if action in  ["note", "event"]:
         # Argument Validations
         if not len(args) in [3, 2]:
-            return f"I don't understand :/\nCorrect command to forget {action}:\n`sr! forget {action} [topic] [tag(optional)]`"
+            return f"Sorry senhor, I dont understand\nCorrect command to forget {action}:\n`!forget {action} [topic] [tag(optional)]`"
 
         topic = args[1].upper()
         if len(args) == 3:
@@ -141,7 +159,7 @@ def forget(args, records):
             if deleted:
                 return f"{action} **{tag}** forgotten from topic **{topic}**."
 
-            return f"Couldn't find {action} **{topic} {tag}**."
+            return f"I couldn't find {action} **{topic} {tag}**, sorry senhor."
 
         if action == "note":
             deleted = fclr.delete_Notes_Topic(topic=topic, records=records)
@@ -149,22 +167,22 @@ def forget(args, records):
             deleted = fclr.delete_Events_Topic(topic=topic, records=records)
 
         if deleted:
-                response = f"{action} topic **{topic}** forgotten."
+                response = f"{action} topic **{topic}** forgotten, senhor!"
                 return response
-        response = f"Couldn't find {action} topic **{topic}**."
+        response = f"I couldn't find {action} topic **{topic}**, sorry senhor"
         return response
 
     #  Forget Messages
     #  Argument Validation
     if len(args) != 1:
-        return "I don't understand :/\nCorrect command to forget:\n`sr! forget [tag]`"
+        return "Sorry senhor, I dont understand\nCorrect command to forget:\n`!forget [tag]`"
     
     tag = args[0]
     deleted = fclr.delete_Message(tag, records)
     if deleted:
         return f"**{tag}** forgotten."
 
-    return f"Couldn't find a message tagd **{tag}**"
+    return f"I couldn't find a message tag **{tag}**, sorry senhor"
 
 
 def add(args, records):
@@ -172,7 +190,7 @@ def add(args, records):
     if action in ["note", "event"]:
         #  Argument Validations
         if not len(args) in [4, 3]:
-            return f"I don't understand :/\nCorrect command to add {action}:\n`sr! {action} add [topic] [{action}_tag] [content]`"
+            return f"Sorry senhor, I dont understand\nCorrect command to add {action}:\n`!{action} add [topic] [{action}_tag] [content]`"
 
         topic = args[1].upper()
         #  Multiple entries
@@ -187,22 +205,22 @@ def add(args, records):
                     content = entry[1]
                     #  Validations
                     if not len(content)<=ALLOWED_NOTE_CHARACTERS and len(content)>0:
-                        return f"Note {tag} should be less than 240 characters"
+                        return f"Senhor! note {tag} should be less than 240 characters"
                     added = fclr.add_Note(records=records, topic=topic, tag=tag, content=content)
                 else:
                     date = entry[1]
                     #  Validations
                     if not vclr.is_Correct_Date_Format(date):
-                        return f"On event {tag} date format should be Day/Month/Year"
+                        return f"Senhor! on event {tag} date format should be Day/Month/Year"
 
                     if vclr.get_Days_Left(date) < 0:
-                        return f"Event **{tag}** date `{date}` has already passed.\nIf you still want me to remember it, add a note."
+                        return f"Senhor! event **{tag}** date `{date}` has already passed.\nIf you still want me to remember it, add a note."
                     added = fclr.add_Event(records=records, topic=topic, tag=tag, date=date)
 
             if added:
-                return f"{action}s **{tags}** added in topic **{topic}**."
+                return f"{action}s **{tags}** added in topic **{topic}** senhor!"
 
-            return f"One or more of {action}s **{tags}** already exists in topic **{topic}**."
+            return f"Senhor! One or more of {action}s **{tags}** already exists in topic **{topic}**."
 
         #  Single entry
         tag = args[2].upper()
@@ -235,7 +253,7 @@ def edit(args, records):
     if action_caps in ["NOTE", "EVENT"]:
         #  Argument Validations
         if not len(args) in [4, 3]:
-            return f"I don't understand :/\nCorrect command to edit {action}:\n`sr! edit {action} [topic] [{action}_tag] [content]`"
+            return f"Sorry senhor, I dont understand\nCorrect command to edit {action}:\n`!edit {action} [topic] [{action}_tag] [content]`"
 
         topic = args[1].upper()
         #  Multiple entries
@@ -296,13 +314,16 @@ def edit(args, records):
 def notes(args, records):
     #  Topic tags
     if len(args) == 0:
-        topic_tags = fclr.get_Notes(records)
-        if topic_tags is None:
+        topic_names = fclr.get_Topic_Names(table="NOTES", records=records)
+        if topic_names is None:
             return "There are no added notes."
 
-        response = f"**Note topics:**\n"
-        for tag in topic_tags:
-            response += f"-> {tag}\n"
+        response = f"**Notes**\n"
+        for name in topic_names:
+            response += f"**-> {name}:**\n"
+            tag_names = fclr.get_Topic_Tag_Names("NOTES", name, records)
+            for tag in tag_names:
+                response += f" - {tag}\n"
         
         return response
 
@@ -328,14 +349,16 @@ def events(args, records):
         return response
 
     elif action == "TOPICS":
-        #  Get event topic tags
-        topic_tags = fclr.get_Events(records)
-        if topic_tags is None:
+        topic_names = fclr.get_Topic_Names(table="EVENTS", records=records)
+        if topic_names is None:
             return "There are no added events."
 
-        response = f"**Event topics:**\n"
-        for tag in topic_tags:
-            response += f"-> {tag}\n"
+        response = f"**Events**\n"
+        for name in topic_names:
+            response += f"**-> {name}:**\n"
+            tag_names = fclr.get_Topic_Tag_Names("EVENTS", name, records)
+            for tag in tag_names:
+                response += f" - {tag}\n"
         
         return response
 
