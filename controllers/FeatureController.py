@@ -13,13 +13,13 @@ def get_Commands_Description(features):
     return description
 
 #  Remembered messages
-def add_Message(name,  message_ID, records):
-    added = records.create(table="MESSAGES", topic="REMEMBERED", name=name, item=message_ID)
+def add_Message(tag,  message_ID, records):
+    added = records.create(table="MESSAGES", topic="REMEMBERED", tag=tag, content=message_ID)
     return added
 
 
-def get_Message(name, records):
-    message_ID = records.get(table="MESSAGES", topic="REMEMBERED", name=name)
+def get_Message(tag, records):
+    message_ID = records.get(table="MESSAGES", topic="REMEMBERED", tag=tag)
     if message_ID:
         records.requested_message_ID = message_ID
         return True
@@ -27,31 +27,31 @@ def get_Message(name, records):
     return False
 
 
-def delete_Message(name, records):
-    removed = records.remove(table="MESSAGES", topic="REMEMBERED", name=name)
+def delete_Message(tag, records):
+    removed = records.remove(table="MESSAGES", topic="REMEMBERED", tag=tag)
     return removed
 
 #  Notes
-def edit_Note(topic, name, item, records):
-    edited = records.update(table="NOTES", topic=topic, name=name, item=item)
+def edit_Note(topic, tag, content, records):
+    edited = records.update(table="NOTES", topic=topic, tag=tag, content=content)
     return edited
 
 
-def add_Note(topic, name, item, records):
-    created = records.create(table="NOTES", topic=topic, name=name, item=item)
+def add_Note(topic, tag, content, records):
+    created = records.create(table="NOTES", topic=topic, tag=tag, content=content)
     return created
 
 
-def get_Note(records, topic, name):
-    note = records.get(table="NOTES", topic=topic, name=name)
+def get_Note(records, topic, tag):
+    note = records.get(table="NOTES", topic=topic, tag=tag)
     return note
 
 
 def get_Notes(records):
     notes_table = records.get(table="NOTES")
-    note_topic_names = notes_table.keys()
-    if note_topic_names:
-        return note_topic_names
+    note_topic_tags = notes_table.keys()
+    if note_topic_tags:
+        return note_topic_tags
     return None
 
 
@@ -61,13 +61,13 @@ def get_Notes_Topic(records, topic):
         return None
 
     text = f"**Notes on topic {topic}:**\n"
-    for name in notes.keys():
-        text += f"**-> {name}** ```{notes[name]}```\n" 
+    for tag in notes.keys():
+        text += f"**-> {tag}** ```{notes[tag]}```\n" 
     return text
 
 
-def delete_Note(records, topic, name):
-    deleted = records.remove(table="NOTES", topic=topic, name=name)
+def delete_Note(records, topic, tag):
+    deleted = records.remove(table="NOTES", topic=topic, tag=tag)
     return deleted
 
 
@@ -87,7 +87,7 @@ def get_Ordered_Events(records):
     #  Events across all topics
     all_events = []
     for topic in events.keys():
-        topic_events = [{"Topic": topic,"Name": name, "Date": events[topic][name]} for name in events[topic].keys()]
+        topic_events = [{"Topic": topic,"Tag": tag, "Date": events[topic][tag]} for tag in events[topic].keys()]
         all_events += topic_events
 
     all_events.sort(key=lambda x: datetime.strptime(x["Date"], '%d/%m/%Y'))
@@ -98,37 +98,37 @@ def delete_Expired_Events(records):
     events = records.get(table="EVENTS")
     expired_events = []
     for topic in events.keys():
-        for name in events[topic].keys():
-            days_Left = get_Days_Left(events[topic][name])
+        for tag in events[topic].keys():
+            days_Left = get_Days_Left(events[topic][tag])
             if days_Left<0:
-                expired_events.append((topic, name))
+                expired_events.append((topic, tag))
     
     #  Removing expired events
     for event in expired_events:
-        records.remove(table="EVENTS", topic=event[0], name=event[1])
+        records.remove(table="EVENTS", topic=event[0], tag=event[1])
 
 
-def edit_Event(topic, name, date, records):
-    edited = records.update(table="EVENTS", topic=topic, name=name, item=date)
+def edit_Event(topic, tag, date, records):
+    edited = records.update(table="EVENTS", topic=topic, tag=tag, content=date)
     return edited
 
 
-def add_Event(topic, name, date, records):
-    created = records.create(table="EVENTS", topic=topic, name=name, item=date)
+def add_Event(topic, tag, date, records):
+    created = records.create(table="EVENTS", topic=topic, tag=tag, content=date)
     return created
 
 
-def get_Event(records, topic, name):
+def get_Event(records, topic, tag):
     delete_Expired_Events(records)
-    event = records.get(table="EVENTS", topic=topic, name=name)
+    event = records.get(table="EVENTS", topic=topic, tag=tag)
     return event
 
 
 def get_Events(records):
     events_table = records.get(table="EVENTS")
-    event_topic_names = events_table.keys()
-    if event_topic_names:
-        return event_topic_names
+    event_topic_tags = events_table.keys()
+    if event_topic_tags:
+        return event_topic_tags
     return None
 
 
@@ -138,11 +138,11 @@ def get_Events_Topic(records, topic):
         return None
 
     #  Sorting events acording to dates
-    events = dict(sorted(events.items(), key=lambda x: datetime.strptime(x[1], '%d/%m/%Y')))
+    events = dict(sorted(events.contents(), key=lambda x: datetime.strptime(x[1], '%d/%m/%Y')))
 
     text = f"**Events on topic {topic}:**\n"
-    for name in events.keys():
-        text += f"**-> {name}** `{events[name]}`\n" 
+    for tag in events.keys():
+        text += f"**-> {tag}** `{events[tag]}`\n" 
     return text
 
 
@@ -151,7 +151,7 @@ def urgent_Events(records):
     table = records.get(table="EVENTS")
     events = []
     for topic in table.keys():
-        for event in table[topic].items():
+        for event in table[topic].contents():
             events.append(event)
 
     if events == []:
@@ -173,8 +173,8 @@ def urgent_Events(records):
     return text
 
 
-def delete_Event(records, topic, name):
-    deleted = records.remove(table="EVENTS", topic=topic, name=name)
+def delete_Event(records, topic, tag):
+    deleted = records.remove(table="EVENTS", topic=topic, tag=tag)
     return deleted
 
 

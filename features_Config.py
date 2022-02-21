@@ -1,6 +1,6 @@
 from models.Feature import Feature
 from views.response import *
-from settings import ACTIVATION_WORD
+from settings import ACTIVATION_SYMBOL, ACTIVATION_WORD
 
 #  Intialize your feature here
 greeting_feature =  Feature(command="HI", 
@@ -31,12 +31,12 @@ help_feature = Feature(command="HELP",
                       )
 
 add_description = f"""**-> Add:**
- - `{ACTIVATION_WORD} add note [topic] [note_name] "[content]"`
- - `{ACTIVATION_WORD} add event [topic] [event_name] [Day/Month/Year]`
- - To add/edit multiple at once notes/events use the following format:
-```{ACTIVATION_WORD} add event [topic]
-[name] [Day/Month/Year]
-[name] [Day/Month/Year]```"""
+ - `{ACTIVATION_SYMBOL} add note [topic] [note_tag] "[content]"`
+ - `{ACTIVATION_SYMBOL} add event [topic] [event_tag] [Day/Month/Year]`
+**-> Add multiple format:**
+```{ACTIVATION_SYMBOL} add event/note [topic]
+[tag] [Day/Month/Year]
+[tag] [Day/Month/Year]```"""
 add_feature = Feature(command="ADD", 
                       args_required=True, 
                       view_Function=add, 
@@ -45,8 +45,8 @@ add_feature = Feature(command="ADD",
                       )
 
 edit_description = f"""**-> Edit:**
- - `{ACTIVATION_WORD} edit note [topic] [note_name] "[content]"`
- - `{ACTIVATION_WORD} edit event [topic] [event_name] [Day/Month/Year]`"""
+ - `{ACTIVATION_SYMBOL} edit note [topic] [tag] "[content]"`
+ - `{ACTIVATION_SYMBOL} edit event [topic] [tag] [Day/Month/Year]`"""
 edit_feature = Feature(command="EDIT", 
                       args_required=True, 
                       view_Function=edit, 
@@ -59,13 +59,13 @@ remember_message_feature = Feature(command="REMEMBER",
                                   records_Required=True,
                                   message_Required=True,
                                   view_Function=remember_Message,
-                                  description=f"**-> Remember messages**: `{ACTIVATION_WORD} remember [name]`(reply to the message)"
+                                  description=f"**-> Remember messages**: `{ACTIVATION_SYMBOL} remember [tag]`(reply to the message)"
                                   )
 
 forget_description = f"""**-> Forget:**
- - `{ACTIVATION_WORD} forget [message_name]`
- - `{ACTIVATION_WORD} forget note [topic] [name(optional)]`
- - `{ACTIVATION_WORD} forget event [topic] [name(optional)]`"""
+ - `{ACTIVATION_SYMBOL} forget [message_tag]`
+ - `{ACTIVATION_SYMBOL} forget note [topic] [tag(optional)]`
+ - `{ACTIVATION_SYMBOL} forget event [topic] [tag(optional)]`"""
 forget_feature = Feature(command="FORGET",
                         args_required=True,
                         records_Required=True,
@@ -74,9 +74,9 @@ forget_feature = Feature(command="FORGET",
                         )
 
 get_description = f"""**-> Get:**
- - `{ACTIVATION_WORD} get [message_name]`
- - `{ACTIVATION_WORD} get note [topic] [name(optional)]`
- - `{ACTIVATION_WORD} get event [topic] [name(optional)]`"""
+ - `{ACTIVATION_SYMBOL} get [message_tag]`
+ - `{ACTIVATION_SYMBOL} get note [topic] [tag(optional)]`
+ - `{ACTIVATION_SYMBOL} get event [topic] [tag(optional)]`"""
 get_feature = Feature(command="GET",
                       args_required=True,
                       records_Required=True,
@@ -84,10 +84,9 @@ get_feature = Feature(command="GET",
                       description=get_description
                       )
 
-events_description =f"""**-> Events:**
- - Schedule: `{ACTIVATION_WORD} events`
- - Urgent: `{ACTIVATION_WORD} events urgent`
- - Topics: `{ACTIVATION_WORD} events topics`"""
+events_description =f"""**-> Events:** `{ACTIVATION_WORD} events`
+**->  Urgent Events:** `{ACTIVATION_WORD} events urgent`
+**->  Event Topics:** `{ACTIVATION_WORD} events topics`"""
 events_feature = Feature(command="EVENTS", 
                         args_required=True, 
                         view_Function=events, 
@@ -105,17 +104,17 @@ notes_feature = Feature(command="NOTES",
 
 #  Add the initialized feature here
 features = [greeting_feature,
-            current_day_feature, 
             praise_feature, 
-            scold_feature, 
+            scold_feature,  
             help_feature, 
+            current_day_feature, 
+            events_feature, 
+            notes_feature, 
             remember_message_feature,
             add_feature, 
             get_feature,
             edit_feature, 
             forget_feature,
-            events_feature, 
-            notes_feature,  
             ]
 
 
