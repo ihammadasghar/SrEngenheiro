@@ -11,23 +11,23 @@ greeting_feature =  Feature(command="HI",
 
 current_day_feature = Feature(command="TODAY",
                               view_Function=today,
-                              description=f"**-> Date today**: `{ACTIVATION_SYMBOL}sr today`"
+                              description=f"**-> Date today**: `{ACTIVATION_SYMBOL}today`"
                               )               
 
 praise_feature = Feature(command="GOOD-BOT",
                         view_Function=praise,
-                        description=f"**-> Praise**: `{ACTIVATION_SYMBOL}sr Good-Bot`"
+                        description=f"**-> Praise**: `{ACTIVATION_SYMBOL}Good-Bot`"
                         )
 
 scold_feature = Feature(command="BAD-BOT",
                         view_Function=scold,
-                        description=f"**-> Scold**: `{ACTIVATION_SYMBOL}sr Bad-Bot`"
+                        description=f"**-> Scold**: `{ACTIVATION_SYMBOL}Bad-Bot`"
                         )
 
     
 help_feature = Feature(command="HELP", 
                       view_Function=help,
-                      description= f"**-> Help**: `{ACTIVATION_SYMBOL}sr help`"
+                      description= f"**-> Help**: `{ACTIVATION_SYMBOL}help`"
                       )
 
 add_description = f"""**-> Add:**
