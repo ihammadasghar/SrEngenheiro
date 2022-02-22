@@ -64,7 +64,6 @@ remember_message_feature = Feature(command="REMEMBER",
                                   )
 
 forget_description = f"""**-> Forget:** `{ACTIVATION_SYMBOL}forget [message_tag]`
- - `{ACTIVATION_SYMBOL}forget note [tag]`
  - `{ACTIVATION_SYMBOL}forget note [topic] [tag(optional)]`
  - `{ACTIVATION_SYMBOL}forget event [topic] [tag(optional)]`"""
 forget_feature = Feature(command="FORGET",

@@ -176,7 +176,7 @@ def forget(args, records):
         if deleted:
                 response = f"{action} topic **{topic}** forgotten, senhor!"
                 return response
-        response = f"I couldn't find {action} topic **{topic}**, sorry senhor"
+        response = f"I couldn't find {action} topic **{topic}**, sorry senhor\nTo forget note/event:`!forget {action} [topic] [tag(optional)]`"
         return response
 
     #  Forget Messages
