@@ -96,7 +96,6 @@ events_feature = Feature(command="EVENTS",
                         )
 
 notes_feature = Feature(command="NOTES", 
-                        args_required=True, 
                         view_Function=notes,
                         records_Required=True, 
                         description=f"**-> Note topics:** `{ACTIVATION_SYMBOL}notes`"

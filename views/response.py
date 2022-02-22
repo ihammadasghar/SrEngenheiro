@@ -21,6 +21,7 @@ async def main(message, features, server):
         if command == feature.command:
             params = vclr.get_Args(commands, feature, records, message)
             response = feature.view_Function(*params)
+
             await message.channel.send(response)
 
             #  Update Records
@@ -263,6 +264,7 @@ def add(args, records):
         if added:
             return f"{action} **{tag}** added in topic **{topic}**."
         return f"A {action} with the tag **{tag}** already exists in topic **{topic}**."
+    return f"Sorry senhor, I don't know what {action} is."
 
 
 def edit(args, records):
@@ -339,23 +341,23 @@ def edit(args, records):
         if edited:
             return f"{action} **{tag}** edited in topic **{topic}** senhor!."
         return f"Senhor! {action} with the tag **{tag}** doesn't exist in topic **{topic}**."
+    return f"Sorry senhor, I don't know what {action} is."
 
 
-def notes(args, records):
+def notes(records):
     #  Topic tags
-    if len(args) == 0:
-        topic_names = fclr.get_Topic_Names(table="NOTES", records=records)
-        if topic_names is None:
-            return "There are no added notes."
+    topic_names = fclr.get_Topic_Names(table="NOTES", records=records)
+    if topic_names is None:
+        return "There are no added notes."
 
-        response = f"**Notes**\n"
-        for name in topic_names:
-            response += f"**-> {name}:**\n"
-            tag_names = fclr.get_Topic_Tag_Names("NOTES", name, records)
-            for tag in tag_names:
-                response += f" - {tag}\n"
-        
-        return response
+    response = f"**Notes**\n"
+    for name in topic_names:
+        response += f"**-> {name}:**\n"
+        tag_names = fclr.get_Topic_Tag_Names("NOTES", name, records)
+        for tag in tag_names:
+            response += f" - {tag}\n"
+    
+    return response
 
 
 def events(args, records):
@@ -392,5 +394,4 @@ def events(args, records):
         
         return response
 
-    else:
-        return f"I don't know how to perform the action **{action}**."
+    return f"Sorry senhor, I don't know what {action} is."
