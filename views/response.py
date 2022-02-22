@@ -201,11 +201,11 @@ def add(args, records):
 
         #  Multiple entries
         mult_entries = False
-        
         if len(args)==3 and type(args[2]) == list:
             topic = args[1]
             entries = args[2]
-            mult_entries == True
+            mult_entries = True
+
         elif type(args[1]) == list:
             topic = "GENERAL"
             entries = args[1]
@@ -280,7 +280,7 @@ def edit(args, records):
         if len(args)==3 and type(args[2]) == list:
             topic = args[1]
             entries = args[2]
-            mult_entries == True
+            mult_entries = True
         elif type(args[1]) == list:
             topic = "GENERAL"
             entries = args[1]
