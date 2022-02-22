@@ -19,12 +19,11 @@ def add_Message(tag,  message_ID, records):
 
 
 def get_Message(tag, records):
-    message_ID = records.get(table="MESSAGES", topic="REMEMBERED", tag=tag)
-    if message_ID:
-        records.requested_message_ID = message_ID
-        return True
+    ids = records.get(table="MESSAGES", topic="REMEMBERED", tag=tag)
+    if ids:
+        return ids
 
-    return False
+    return None
 
 
 def delete_Message(tag, records):

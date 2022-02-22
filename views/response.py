@@ -32,10 +32,7 @@ async def main(message, features, server):
             #  Update Records
             if records.updated:
                 await pclr.save_Records(records.records, server)
-            
-            # If user has requested to fetch a message
-            id = records.requested_message_ID if records.requested_message_ID else None
-            return id
+            return
 
     await message.channel.send(f"Sorry senhor, I don't understand.\n Is this french?")
     return
@@ -84,14 +81,15 @@ def remember_Message(args, records, message):
 
 
     tag = args[0]
-    added = fclr.add_Message(tag, message.reference.message_id, records)
+    ids = f"{message.channel.id}/{message.reference.message_id}"
+    added = fclr.add_Message(tag, ids, records)
     if added:
         return f"I'll keep an eye on **{tag}** senhor!"
 
     return f"Senhor, a message with the tag **{tag}** already exists"
 
 
-def get(args, records):
+def get(args, records, message):
     action =  args[0].lower()
     if action in ["note", "event"]:
         #  Argument Validations
@@ -138,9 +136,9 @@ def get(args, records):
         return "Sorry senhor,  I don't understand\nCorrect command to get remembered message:\n`!get [tag]`"
     
     tag = args[0]
-    found = fclr.get_Message(tag, records)
-    if found:
-        return f"Searching through memories for **{tag}**..."
+    ids = fclr.get_Message(tag, records)
+    if ids:
+        return f"**-> {tag}:** https://discordapp.com/channels/{message.guild.id}/{ids}"
     return f"Sorry senhor, I don't remember the message **{tag}**"
 
 

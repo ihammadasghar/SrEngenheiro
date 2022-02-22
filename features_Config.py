@@ -80,6 +80,7 @@ get_description = f"""**-> Get:** `{ACTIVATION_SYMBOL}get [message_tag]`
 get_feature = Feature(command="GET",
                       args_required=True,
                       records_Required=True,
+                      message_Required=True,
                       view_Function=get,
                       description=get_description
                       )

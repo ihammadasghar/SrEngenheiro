@@ -29,21 +29,7 @@ if __name__ == "__main__":
 
             server = Server(record_Message=record_file, data_Channel=data_Channel, ID=guild_ID)
             
-            #  Find and send requested message
-            requested_message_ID = await main(message, features, server)
-            if requested_message_ID:
-                r_message = None
-                for channel in bot.get_guild(guild_ID).channels:
-                    if r_message:
-                        break
-                    try:
-                        r_message = await channel.fetch_message(id=requested_message_ID)
-                    except:
-                        continue
-                name = r_message.author.display_name
-
-                content = f'**Remembered Message:**\n"{r_message.content}" - **By {name}**'
-                await message.channel.send(content=content, files=r_message.attachments)
+            await main(message, features, server)
 
 
     bot.run(TOKEN)

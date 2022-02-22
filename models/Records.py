@@ -3,7 +3,6 @@ class Records:
         self.records = records
         self.server = server
         self.updated = False
-        self.requested_message_ID = None
 
 
     def get(self, table, topic=None, tag=None):
