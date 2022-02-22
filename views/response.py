@@ -12,8 +12,13 @@ async def main(message, features, server):
 
     #  Special feature cases
     if command == "HELP":  #  Case: Requires all feature list
-        response = help(features)
-        await message.channel.send(response)
+        descriptions = fclr.get_Commands_Description(features)
+        response = "**Commands**\n"
+        for description in descriptions:
+            if description:
+                response += description + "\n"
+        response += "**-> Examples on:** `https://github.com/ihammadasghar/SrEngenheiro/blob/main/README.md`"
+        await message.channel.send(response, embed=None)
         return
 
     #  Identify feature to execute
@@ -52,15 +57,6 @@ def praise():
 #  Easter Egg
 def scold():
     return "ಥ_ಥ"
-
-
-def help(features):
-    descriptions = fclr.get_Commands_Description(features)
-    response = "**Commands**\n"
-    for description in descriptions:
-        if description:
-            response += description + "\n"
-    return response
 
 
 def messages(args, records):
