@@ -153,7 +153,7 @@ def get_Events_Topic(records, topic):
         return None
 
     #  Sorting events acording to dates
-    events = dict(sorted(events.contents(), key=lambda x: datetime.strptime(x[1], '%d/%m/%Y')))
+    events = dict(sorted(events.items(), key=lambda x: datetime.strptime(x[1], '%d/%m/%Y')))
 
     text = f"**Events on topic {topic}:**\n"
     for tag in events.keys():
@@ -166,7 +166,7 @@ def urgent_Events(records):
     table = records.get(table="EVENTS")
     events = []
     for topic in table.keys():
-        for event in table[topic].contents():
+        for event in table[topic].items():
             events.append(event)
 
     if events == []:
