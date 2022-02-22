@@ -175,7 +175,7 @@ def urgent_Events(records):
     #  Sorting and events acording to dates
     events.sort(key=lambda x: datetime.strptime(x[1], '%d/%m/%Y'))
     
-    text = f"**Urgent events:**\n"
+    text = "**Urgent events:**\n"
     for event in events:
         days_Left = get_Days_Left(event[1])
         if  7>= days_Left:

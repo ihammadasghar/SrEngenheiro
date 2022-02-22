@@ -32,18 +32,18 @@ async def main(message, features, server):
             id = records.requested_message_ID if records.requested_message_ID else None
             return id
 
-    await message.channel.send(f"Sorry senhor, I dont understand this command.")
+    await message.channel.send(f"Sorry senhor, I don't understand.\n Is this french?")
     return
 
 
 def greet(message):
     tag = message.author.display_name
-    return f"Hi Sr.{tag}! `!help` to see how I can help"
+    return f"Hi Sr.{tag}! `!help` to see how I can be of help."
 
 
 def today():
     date_Today = fclr.get_Date_Today()
-    return f"Date today is `{date_Today}`"
+    return f"Date today is `{date_Today}.`"
 
 #  Easter Egg
 def praise():
@@ -68,7 +68,7 @@ def messages(args, records):
     if len(args) == 0:
         topic_names = fclr.get_Topic_Names(table="MESSAGES", records=records)
         if topic_names is None:
-            return "There are no messages in my memory senhor"
+            return "There are no messages in my memory senhor."
 
         response = f"**Messages**\n"
         tag_names = fclr.get_Topic_Tag_Names(table="MESSAGES", topic="REMEMBERED", records=records)
@@ -113,7 +113,7 @@ def get(args, records):
                 content = fclr.get_Event(topic=topic, tag=tag, records=records)
 
             if not content:
-                return f"I couldn't find {action} **{topic} {tag}**."
+                return f"Sorry senhor, I couldn't find {action} **{topic} {tag}**."
 
             text = f"**{action} on topic {topic}:\n-> {tag}** `{content}`"
             return text
@@ -124,7 +124,7 @@ def get(args, records):
             if not content:
                 content = fclr.get_Note(topic="GENERAL", tag=topic, records=records)
                 if not content:
-                    return f"I couldn't find {action} **{topic}** in GENERAL notes, sorry senhor."
+                    return f"Sorry senhor, I couldn't find {action} **{topic}** in GENERAL notes."
                 return f"**{action} on topic GENERAL:\n-> {topic}** `{content}`"
             return content
         else:
@@ -132,20 +132,20 @@ def get(args, records):
             if not content:
                 content = fclr.get_Event(topic="GENERAL", tag=topic, records=records)
                 if not content:
-                    return f"I couldn't find {action} **{topic}** in GENERAL events, sorry senhor."
+                    return f"Sorry senhor, I couldn't find {action} **{topic}** in GENERAL events."
                 return f"**{action} on topic GENERAL:\n-> {topic}** `{content}`"
             return content
 
     #  Get messages
     #  Argument Validation
     if len(args) != 1 or type(args[0]) == list:
-        return "Senhor, I don't understand\nCorrect command to get remembered message:\n`!get [tag]`"
+        return "Sorry senhor,  I don't understand\nCorrect command to get remembered message:\n`!get [tag]`"
     
     tag = args[0]
     found = fclr.get_Message(tag, records)
     if found:
         return f"Searching through memories for **{tag}**..."
-    return f"I don't remember the message **{tag}**"
+    return f"Sorry senhor, I don't remember the message **{tag}**"
 
 
 def forget(args, records):
@@ -166,7 +166,7 @@ def forget(args, records):
             if deleted:
                 return f"{action} **{tag}** forgotten from topic **{topic}**."
 
-            return f"I couldn't find {action} **{topic} {tag}**, sorry senhor."
+            return f"Sorry senhor, I couldn't find {action} **{topic} {tag}**."
 
         if action == "note":
             deleted = fclr.delete_Notes_Topic(topic=topic, records=records)
@@ -176,7 +176,7 @@ def forget(args, records):
         if deleted:
                 response = f"{action} topic **{topic}** forgotten, senhor!"
                 return response
-        response = f"I couldn't find {action} topic **{topic}**, sorry senhor\nTo forget note/event:`!forget {action} [topic] [tag(optional)]`"
+        response = f"Sorry senhor, I couldn't find {action} topic **{topic}**, sorry senhor\nTo forget note/event:`!forget {action} [topic] [tag(optional)]`"
         return response
 
     #  Forget Messages
@@ -189,7 +189,7 @@ def forget(args, records):
     if deleted:
         return f"**{tag}** forgotten."
 
-    return f"I couldn't find a message tag **{tag}**, sorry senhor"
+    return f"Sorry senhor, I couldn't find a message tag **{tag}**."
 
 
 def add(args, records):
@@ -262,8 +262,8 @@ def add(args, records):
             added = fclr.add_Event(records=records, topic=topic, tag=tag, date=content)
 
         if added:
-            return f"{action} **{tag}** added in topic **{topic}**."
-        return f"A {action} with the tag **{tag}** already exists in topic **{topic}**."
+            return f"{action} **{tag}** added in topic **{topic}** senhor."
+        return f"Senhor! a {action} with the tag **{tag}** already exists in topic **{topic}**."
     return f"Sorry senhor, I don't know what {action} is."
 
 
@@ -348,7 +348,7 @@ def notes(records):
     #  Topic tags
     topic_names = fclr.get_Topic_Names(table="NOTES", records=records)
     if topic_names is None:
-        return "There are no added notes."
+        return "There are no added notes senhor."
 
     response = f"**Notes**\n"
     for name in topic_names:
@@ -366,7 +366,7 @@ def events(args, records):
     if len(args) == 0:
         all_events = fclr.get_Ordered_Events(records)
         if all_events is None:
-            return "There are no upcoming added events."
+            return "There are no upcoming added events senhor."
 
         response = "**Upcoming events:**\n"
         for event in all_events:
@@ -376,14 +376,14 @@ def events(args, records):
     action =  args[0].upper()
     if action == "URGENT":
         response = fclr.urgent_Events(records)
-        if not response:
-            response = "Nothing urgent, no events in the next 7 days."
+        if response == "**Urgent events:**\n":
+            response = "Nothing urgent, no events in the next 7 days senhor."
         return response
 
     elif action == "TOPICS":
         topic_names = fclr.get_Topic_Names(table="EVENTS", records=records)
         if topic_names is None:
-            return "There are no added events."
+            return "There are no added events senhor."
 
         response = f"**Events**\n"
         for name in topic_names:
