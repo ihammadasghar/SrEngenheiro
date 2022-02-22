@@ -5,7 +5,7 @@ from settings import ACTIVATION_SYMBOL
 #  Intialize your feature here
 greeting_feature =  Feature(command="HI", 
                             view_Function=greet, 
-                            description=None,
+                            description='**-> Add welcome note:** `!add note server "Welcome to our server"`',
                             message_Required=True
                             )
 
